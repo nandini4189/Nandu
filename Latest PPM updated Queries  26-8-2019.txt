@@ -1,0 +1,434 @@
+Membership Report Latest queries
+
+
+1)   Membership report on Yearly/Monthly/quarterly,daily basis
+
+SELECT    COUNT(DISTINCT customer_id ),  
+    extract (year from day_date ) 
+FROM  d_members m,time_dim t
+WHERE m.member_date_id=t.day_key
+AND
+EXTRACT (YEAR FROM day_date)IN (2016,2017,2018,2019) AND
+EXTRACT (MONTH FROM day_date)=12
+GROUP BY 2
+
+
+2) Membership report on count/income. 
+
+
+SELECT    COUNT(DISTINCT customer_id ),p. plan,
+
+  SUM(s.income)
+FROM  d_members m,time_dim t,d_subscription s, d_plan p
+WHERE m.member_date_id=t.day_key
+AND m.member_id=s.mem_id
+AND s.plan_id=p.id
+
+GROUP BY 2
+
+
+
+
+3) CUSTOMER LIFE TIME REPORT 
+
+
+  SELECT 
+  "d_login"."customer_name" AS "customer_name",
+
+  "d_subscription"."stages" AS "stages",
+
+  "d_subscription"."income" AS "income",
+ 
+  "Start-date"."day_date" AS "day_date",
+  
+  "d_plan"."plan" AS "plan"
+  
+FROM "public"."d_login" "d_login"
+  INNER  JOIN "public"."d_members" "d_members" ON ("d_login"."customer_id" = "d_members"."customer_id")
+  INNER JOIN "public"."d_subscription" "d_subscription" ON ("d_members"."member_id" = "d_subscription"."mem_id")
+  INNER JOIN "public"."time_dim" "Start-date" ON ("d_subscription"."start_date_id" = "Start-date"."day_key")
+  INNER JOIN "public"."d_plan" "d_plan" ON ("d_subscription"."plan_id" = "d_plan"."id")
+  INNER JOIN "public"."time_dim" "End-date" ON ("d_subscription"."end_date_id" = "End-date"."day_key")
+  INNER JOIN "public"."time_dim" "Last-date" ON ("d_subscription"."last_date_id" = "Last-date"."day_key")
+  INNER JOIN "public"."time_dim" "time_dim" ON ("d_members"."member_date_id" = "time_dim"."day_key")
+  WHERE customer_name='Aadi'
+
+
+
+
+4) Detailed Report 
+
+   
+SELECT 
+  "d_login"."customer_name" AS "customer_name",
+ "d_members"."customer_id" AS "customer_id (d_members)",
+  "d_members"."amount" AS "amount",
+ "time_dim"."day_date" AS "day_date (time_dim) #1"
+ FROM "public"."d_login" "d_login"
+  INNER JOIN "public"."d_members" "d_members" ON ("d_login"."customer_id" = "d_members"."customer_id")
+  INNER JOIN "public"."d_subscription" "d_subscription" ON ("d_members"."member_id" = "d_subscription"."mem_id")
+  INNER JOIN "public"."time_dim" "Start-date" ON ("d_subscription"."start_date_id" = "Start-date"."day_key")
+  INNER JOIN "public"."d_plan" "d_plan" ON ("d_subscription"."plan_id" = "d_plan"."id")
+  INNER JOIN "public"."time_dim" "End-date" ON ("d_subscription"."end_date_id" = "End-date"."day_key")
+  INNER JOIN "public"."time_dim" "Last-date" ON ("d_subscription"."last_date_id" = "Last-date"."day_key")
+  INNER JOIN "public"."time_dim" "time_dim" ON ("d_members"."member_date_id" = "time_dim"."day_key")
+  
+ 
+  
+
+
+
+
+========================================================================Transaction Report ========================================
+  
+
+1) 
+
+SELECT gateway,count(distinct    dt.customer_id ) ,count(gateway),sum(t_income) 
+FROM time_dim T,d_transaction DT,d_members m
+WHERE DT.date_id=T.DAY_KEy
+and dt.customer_id=m.customer_id
+AND EXTRACT (YEAR FROM T.day_date ) =2016
+AND EXTRACT (MONTH FROM T.day_date)=1
+GROUP BY 1
+
+
+2nd report query
+
+SELECT gateway,count(gateway) 
+FROM time_dim T,d_transaction DT,d_members m
+WHERE DT.date_id=T.DAY_KEy
+and dt.customer_id=m.customer_id
+AND EXTRACT (YEAR FROM T.day_date ) =2016
+AND EXTRACT (MONTH FROM T.day_date)=1
+GROUP BY 1
+
+
+3 rd report query   
+
+SELECT gateway,count(distinct    dt.customer_id )
+FROM time_dim T,d_transaction DT,d_members m
+WHERE DT.date_id=T.DAY_KEy
+and dt.customer_id=m.customer_id
+AND EXTRACT (YEAR FROM T.day_date ) =2016
+AND EXTRACT (MONTH FROM T.day_date)=1
+GROUP BY 1
+
+ ================================TRANSACTION Detailed Report====================
+
+
+SELECT gateway,count(distinct    dt.customer_id )
+FROM time_dim T,d_transaction DT,d_members m
+WHERE DT.date_id=T.DAY_KEy
+and dt.customer_id=m.customer_id
+AND EXTRACT (YEAR FROM T.day_date ) =2016
+AND EXTRACT (MONTH FROM T.day_date)=1
+GROUP BY 1
+
+
+SELECT DT.customer_id,l.customer_name,DT.account_number,DT.paymenttype,DT.gateway,DT.event,
+DT.comments,DT.flag,DT.transactionid,DT.gateway,DT.t_income
+FROM time_dim T,d_transaction DT,d_members m,d_login l
+WHERE DT.date_id=T.DAY_KEy AND
+DT.customer_id=l.customer_id
+
+
+Calandar view  Detailed Report
+
+SELECT 
+  "d_transaction"."customer_id" AS "customer_id (d_transaction)",
+  "d_login"."customer_name" AS "customer_name",
+  "d_transaction"."account_number" AS "account_number",
+   "d_transaction"."transactionid" AS "transactionid",
+    TO_CHAR( day_date,'month'),
+     TO_CHAR(day_date,'DAY'),
+      "d_transaction"."paymenttype" AS "paymenttype",
+      "d_transaction"."gatewaytransaction" AS "gatewaytransaction",
+   "d_transaction"."flag" AS "flag",
+   "d_transaction"."event" AS "event",
+    "d_transaction"."comments" AS "comments",
+     "d_transaction"."t_income" AS "t_income",
+ "d_transaction"."gateway" AS "gateway",
+
+ "d_transaction"."plan_id" AS "plan_id (d_transaction)"
+ 
+  FROM "public"."d_login" "d_login"
+  INNER JOIN "public"."d_transaction" "d_transaction" ON ("d_login"."customer_id" = "d_transaction"."customer_id")
+  INNER JOIN "public"."d_members" "d_members" ON ("d_transaction"."customer_id" = "d_members"."customer_id")
+  INNER JOIN "public"."time_dim" "Transaction Time Dim" ON ("d_transaction"."date_id" = "Transaction Time Dim"."day_key")
+  INNER JOIN "public"."d_plan" "d_plan" ON ("d_transaction"."plan_id" = "d_plan"."id")
+  WHERE EXTRACT(YEAR FROM day_date)=2016 and
+  EXTRACT(MONTH FROM day_date)=3
+  
+  
+  
+ 2nd Report Detailed Report
+ 
+SELECT 
+  "d_transaction"."customer_id" AS "customer_id (d_transaction)",
+  "d_login"."customer_name" AS "customer_name",
+  "d_transaction"."account_number" AS "account_number",
+   "d_transaction"."transactionid" AS "transactionid",
+    TO_CHAR( day_date,'month'),
+     day_date,
+      "d_transaction"."paymenttype" AS "paymenttype",
+      "d_transaction"."gatewaytransaction" AS "gatewaytransaction",
+   "d_transaction"."flag" AS "flag",
+   "d_transaction"."event" AS "event",
+    "d_transaction"."comments" AS "comments",
+     "d_transaction"."t_income" AS "t_income",
+ "d_transaction"."gateway" AS "gateway",
+
+ "d_transaction"."plan_id" AS "plan_id (d_transaction)"
+ 
+  FROM "public"."d_login" "d_login"
+  INNER JOIN "public"."d_transaction" "d_transaction" ON ("d_login"."customer_id" = "d_transaction"."customer_id")
+  INNER JOIN "public"."d_members" "d_members" ON ("d_transaction"."customer_id" = "d_members"."customer_id")
+  INNER JOIN "public"."time_dim" "Transaction Time Dim" ON ("d_transaction"."date_id" = "Transaction Time Dim"."day_key")
+  INNER JOIN "public"."d_plan" "d_plan" ON ("d_transaction"."plan_id" = "d_plan"."id")
+  WHERE EXTRACT(YEAR FROM day_date)=2016 and
+  EXTRACT(MONTH FROM day_date)=3
+  AND "d_transaction"."gateway"='Paypal'
+
+
+
+
+
+ ========================================================RFM QUERIES=============================================
+ 
+ 
+ 
+ 
+1 . R-Quartile X F-Quartiles(Recency/Frequency)
+...............................
+
+
+select count(DISTINCT cid),r_quartile,f_quartile
+from rfm,d_subscription
+where rfm.rfm_id=d_subscription.rfm_id group by 2,3
+
+
+2 .  No.of customers(y) by No.of orders(x)
+......................................
+
+select count(distinct cid), orders from d_subscription 
+group by 2
+
+
+3 .  #of Customers/Segments
+..............................
+
+select round(avg(recency)/count( distinct recency)),count(distinct cid),segment
+from rfm r,d_subscription d,d_segment s
+where r.rfm_id=d.rfm_id and d.segment_id=s.id
+group by 3
+
+
+
+4 . Average Recency in days
+.........................
+
+select round(sum(recency)/count( distinct cid)),segment
+from rfm r,d_subscription d,d_segment s
+where r.rfm_id=d.rfm_id and d.segment_id=s.id
+group by 2
+
+
+5 . RFM Details..
+.....................................
+
+SELECT customer_name,segment,sum(d.income),count(orders),MIN(rfm)
+from d_login,d_subscription d ,d_segment s,rfm r,time_dim t
+WHERE d.segment_id=s.id
+AND d_login.customer_id=d.cid
+AND d.rfm_id=r.rfm_id
+AND d.start_date_id=t.day_key and
+ d_login.customer_name='Aadi'
+group by 2,1 
+
+==============DETAILED REPORT  FOR RFM ========================
+SELECT m.customer_id,customer_name,segment,orders,plan,stages,EXTRACT(day FROM day_date) startdate,
+ EXTRACT (day FROM day_date) enddate ,
+ EXTRACT (day FROM day_date) lastdate,income,MAX(recency)
+ FROM d_login l,d_subscription su,d_members m,d_segment s,rfm r,time_dim t,d_plan p
+ WHERE l.customer_id=m.customer_id AND 
+ M.member_id=su.mem_id and
+ su.segment_id=s.id and
+ su.rfm_id=r.rfm_id and
+ t.day_Key=su.start_date_id AND 
+  t.day_Key=su.end_date_id and
+  t.day_key=su.last_date_id AND 
+  su.plan_id=p.id
+ GROUP BY 1,2,3,4,5,6,7,8,9,10
+
+
+
+
+                         Upgrades and Downgrades 
+
+1)
+ SELECT distinct SUM(s.income),p.plan,u.upgrades
+ from d_upgrade u,d_plan p,d_subscription s,time_dim t
+ WHERE s.plan_id=p.id and
+ s.plan_id=p.id and
+ s.upgrades_id= u.id and
+ s.start_date_id=t.day_key AND 
+ EXTRACT (YEAR FROM day_date)IN(2016) 
+GROUP BY 2,3
+
+2)
+SELECT distinct EXTRACT (month FROM day_date),p.plan,u.upgrades,sum(s.income)
+ FROM d_upgrade u,d_plan p,d_subscription s,time_dim t
+ WHERE s.plan_id=p.id and
+ s.upgrades_id= u.id AND 
+ s.start_date_id=t.day_key and
+ EXTRACT (YEAR FROM day_date)=2016 AND 
+ EXTRACT (MONTH FROM day_date)=7
+ AND (p.plan)='Basic'
+ GROUP BY 1,2,3
+
+3)
+ SELECT  distinct u.upgrades, COUNT(s.cid)
+ FROM d_upgrade u,d_subscription s,time_dim t
+ WHERE s.upgrades_id= u.id AND 
+ s.start_date_id= t.day_key AND
+ EXTRACT (YEAR FROM day_date)IN(2016,2017,2018,2019) and
+ u.upgrades='Downgrade'
+ GROUP BY 1
+ 
+ 4)
+  SELECT DISTINCT COUNT(s.cid),u.upgrades
+ FROM d_upgrade u,d_subscription s,time_dim t
+ WHERE s.upgrades_id= u.id AND 
+ s.end_date_id= t.day_key AND
+ EXTRACT (YEAR FROM day_date)IN(2016,2017,2018,2019) and
+ u.upgrades='Upgrade'
+ GROUP BY 2
+ 
+ 5)
+  SELECT p.plan ,count(DISTINCT s.cid)
+ FROM d_upgrade u,d_plan p,d_subscription s
+ WHERE s.plan_id=p.id and
+ s.upgrades_id=u.id and
+ u.upgrades='Upgrade'
+ GROUP BY 1
+ 
+ 6)
+  SELECT p.plan ,count(DISTINCT s.cid)
+ FROM d_upgrade u,d_plan p,d_subscription s
+ WHERE s.plan_id=p.id and
+ s.upgrades_id=u.id and
+ u.upgrades='Downgrade'
+ GROUP BY 1
+ 
+ 7)
+ SELECT "d_login"."id" AS "id",
+  "d_login"."customer_name" AS "customer_name",
+  "d_subscription"."cid" AS "cid",
+"d_subscription"."income" AS "income",
+  "d_upgrade"."upgrades" AS "upgrades"
+FROM "public"."d_login" "d_login"
+  INNER JOIN "public"."d_subscription" "d_subscription" ON ("d_login"."customer_id" = "d_subscription"."cid")
+  INNER JOIN "public"."time_dim" "Start-date" ON ("d_subscription"."start_date_id" = "Start-date"."day_key")
+  INNER JOIN "public"."d_plan" "d_plan" ON ("d_subscription"."plan_id" = "d_plan"."id")
+  INNER JOIN "public"."d_members" "d_members" ON ("d_login"."customer_id" = "d_members"."customer_id")
+  INNER JOIN "public"."time_dim" "End-date" ON ("d_subscription"."end_date_id" = "End-date"."day_key")
+  INNER JOIN "public"."time_dim" "Last-date" ON ("d_subscription"."last_date_id" = "Last-date"."day_key")
+  INNER JOIN "public"."d_upgrade" "d_upgrade" ON ("d_subscription"."upgrades_id" = "d_upgrade"."id")
+  
+  where EXTRACT (YEAR FROM day_date)IN(2016) and
+ u.upgrades='Downgrade'
+
+
+
+8) 
+ SELECT * FROM  d_subscription
+ 
+with  
+  
+a AS(  SELECT u.upgrades,'a' AS a,
+  SUM(s.income) s
+  FROM d_subscription s,d_upgrade u
+  WHERE s.upgrades_id=u.id and
+  u.upgrades<>'Normal'
+  GROUP BY 1,2),
+  
+b AS(  SELECT SUM(s.income) s1,'a' AS a FROM d_subscription s,d_upgrade u
+  WHERE s.upgrades_id=u.id 
+and   upgrades<>'Normal'
+  GROUP BY 2
+  )
+  SELECT a.upgrades,cast(a.s AS NUMERIC)/b.s1 FROM a,b
+  WHERE a.a=b.a
+
+
+
+
+
+
+
+  
+====================Subscription Dashboard=============================
+
+1)Subscriber Growth:
+For Stacked Bar:
+
+SELECT EXTRACT(year FROM day_date),flag_sub,COUNT( cid)
+FROM d_subscription,time_dim
+WHERE time_dim.day_key=d_subscription.end_date_id
+AND EXTRACT(year FROM day_date)=2017
+GROUP BY 1,2
+ORDER BY 1
+
+ SELECT * FROM d_subscription
+  For Texual representation:
+
+SELECT EXTRACT(year FROM day_date),EXTRACT(month FROM day_date),flag_sub,COUNT(DISTINCT cid)
+FROM d_subscription,time_dim
+WHERE time_dim.day_key=d_subscription.end_date_id
+AND EXTRACT(month FROM day_date)=1
+GROUP BY 1,2,3
+ORDER BY 1
+
+
+
+2)YEAR OF customer Acquisition:
+
+SELECT EXTRACT(year FROM day_date),EXTRACT(month FROM day_date),flag_sub,COUNT(DISTINCT cid)
+FROM d_subscription,time_dim
+WHERE time_dim.day_key=d_subscription.end_date_id
+AND EXTRACT(year FROM day_date)=2016
+GROUP BY 1,2,3
+ORDER BY 1
+
+SELECT EXTRACT(year FROM day_date),EXTRACT(month FROM day_date),SUM(income)
+
+FROM d_subscription,time_dim
+WHERE time_dim.day_key=d_subscription.end_date_id
+AND EXTRACT(year FROM day_date)=2016
+GROUP BY 1,2
+
+
+
+3)Subscriber Development:
+
+
+
+SELECT EXTRACT(year FROM day_date),EXTRACT(QUARTER FROM day_date) AS quarter,license_type,COUNT( distinct cid)
+FROM d_subscription,time_dim
+WHERE time_dim.day_key=d_subscription.start_date_id
+ 
+GROUP BY 1,2,3
+ORDER BY 1,2
+
+
+
+
+
+
+
+
+
+
+
+

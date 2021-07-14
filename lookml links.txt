@@ -1,0 +1,67 @@
+https://www.youtube.com/watch?v=E47xbD6Y64A --------------->>>>>>>>>>>>>>>>     imp link derived tables
+
+https://docs.looker.com/reference/field-reference/measure-type-reference#string --------->>>>>>>   measure field lookml code
+
+https://docs.looker.com/data-modeling/learning-lookml/sql-runner-create-queries   ----------->>>>>>>   on fly explorer
+
+https://docs.looker.com/exploring-data/creating-looker-expressions  -------------->>>>>>>> creating dimensions measure concepts
+
+
+https://docs.looker.com/exploring-data/creating-looker-expressions/looker-functions-and-operators    ---------->>>>>>> functions and operators
+
+
+
+https://docs.looker.com/reference/field-params/sql ---------------->>>>>>>>>>>>>> (Sql for fields)
+
+https://www.youtube.com/watch?v=-K2DDEX-sv8 ------------>>>>>>>>>.>>embedded analytics in action
+
+
+https://docs.looker.com/reference/field-reference/measure-type-reference#percent_of_previous   ---------->>>>>>. All functions
+
+https://docs.looker.com/reference/field-reference   ------------->>>>>>>>>>>>>>>>Field parameters structures in lookml(IMP SYNTAXES )
+
+https://docs.looker.com/admin-options/platform/visualizations  ------------->>>>>>>>>>>> Sankey Vizualization in looker 
+
+
+https://discourse.looker.com/t/more-powerful-data-drilling/7208  ------------>>>>>>>> Drill down and expanded urls 
+
+https://docs.looker.com/reference -------------->>>>>>>>>>>>>>>>> looker references
+
+https://docs.looker.com/exploring-data/filtering-and-limiting  ----------->>> filtering the data (video )
+
+https://docs.looker.com/data-modeling/getting-started/other-project-files   ---------->>>>>>> Ide folder creating testing the new fields.
+
+
+
+
+https://help.looker.com/hc/en-us/articles/360001288108-Dynamically-Select-Fields-Using-Parameters   DyNAMICALLY USE PARAMETERS IN LOOKER
+https://help.looker.com/hc/en-us/articles/360001288648-How-to-Change-Colors-and-Fonts-Using-HTML    How-to-Change-Colors-and-Fonts-Using-HTML 
+
+https://docs.looker.com/exploring-data/exploring-data#drilling_down_into_the_data  Perfect link for drill down
+
+https://discourse.looker.com/t/calculating-specific-columns-from-a-pivot/4882   pivot calculations
+
+https://docs.looker.com/dashboards/creating-lookml-dashboards  Lookml Dashboards
+
+https://help.looker.com/hc/en-us/articles/360001288108-Dynamically-Select-Fields-Using-Parameters     Parameters 
+
+https://help.looker.com/hc/en-us/articles/360023573273-Great-Use-Cases-for-Parameter-Fields         Parameters use cases
+
+https://docs.looker.com/admin-options/settings/roles      ROLES AND PERMISSIONS
+
+https://docs.looker.com/admin-options/platform/visualizations   Custom visualizations also available
+
+https://docs.looker.com/admin-options/settings/themes  theme changing 
+
+https://docs.looker.com/admin-options/settings/themes#specify_theme
+
+https://docs.looker.com/data-modeling/learning-lookml/extends#extending_a_lookml_dashboard
+
+
+https://docs.looker.com/reference/field-params/html#liquid_variables CONDITIONAL formating
+
+https://docs.looker.com/reference/field-params/html  
+
+https://discourse.looker.com/t/retired-using-markdown-in-text-tiles-on-dashboards/4862   (Very Very Imp for text tile font Changes with Markdown) 
+
+https://help.looker.com/hc/en-us/articles/360001288128-How-to-Add-Images-to-Visualizations   (HTMLImage links)

@@ -1,0 +1,1308 @@
+TDE fies - Extracts
+
+Extracts are saved subsets of a data source that you can use to improve performance, upgrade your data to allow for more advanced capabilities, and analyze offline. You can create an extract by defining filters and limits that include the data you want in the extract. After you create an extract you can refresh it with data from the original data source. You can either fully refresh the data, replacing all of the extract contents; or you can increment the extract; which only adds rows that are new since the last refresh.
+
+Extracts can:
+
+	Improve performance. For file based data sources such as Excel or Access, a full extract takes advantage of the Tableau data engine. For large data sources, a filtered extract can limit the load on the server when you only need a subset of data.
+	Add functionality to file based data sources, such as the ability to compute Count Distinct.
+	It provides work offline facility to the developers.
+	Extracts are saved with .tde extension.
+
+****************************************************************************************************************
+
+
+Difference between Parameter & Quickfilter
+
+Definitions:
+
+Quick Filters: 
+
+	We use the Quick Filters to include or exclude the members from the report.
+
+
+Parameters: 
+
+	Parameters are dynamic variables that can be used as placeholders in formulas.
+	And we can replace constant value by dynamic value
+
+Differences:
+
+	1) We can implement Quick Filters on "Rows" only, it means implement on "Records".
+	
+	where Parameters can be used on Rows or Columns.
+
+	2) We can select More than 1 value at a time
+
+	where Parameter allow us to pass max 1 Value at a time.
+
+	3) Parameter values not get updates automatically
+
+	where Quick filter will get update as database updates.
+
+	4) We can call Parameters into Calculations, where we can't call Quick Filters into calculations.
+
+
+********************************************************************************************************************
+
+
+Filters - Tableau
+
+
+Generally we use the filters to reduce the number of records present on the report or to show only required data on the report & to improve the performance.
+Tableau have the following different kind of filters
+
+                                                                   I.            Regular Filters
+
+									•        Regular Filters – Dimensions
+									•        Regular Filters – Measures
+									•        Regular Filters – Date
+
+                                                                  II.            Quick Filters
+
+                                                                  III.            Context Filters
+
+
+Regular Filters - Dimensions:
+
+	• All fields that are filtered show on the Filters shelf.
+	• We can apply the Regular filters either by dragging fields onto Filers shelf or in the view right click then select either hide or exclude.
+	• Right click on Field from the row shelf.
+
+Here we can filter the data in 4 different ways
+
+	·         General
+	·         Wildcard
+	·         Condition
+	·         Top
+
+a. General: select the required data which should only be showed on the report.
+
+	·         Drag the [Region], [Sales] fields into work Area.
+	·         Drag the [Region] into Filters shelf, then select “General” tab then select the region whichever you want to show in the report.
+
+b. Wildcard: We can filter the data by applying Wildcard.
+
+Contains:
+
+
+EX 1 :
+	·         Drag the [Region], [Sales] fields into work Area.
+	·         Drag the [Region]into Filters shelf, then select “Wildcard” tab then select the “Contains”  then type ‘so’ then click on “OK” then report will filter the Region members and will show only “South” region data.
+	·         This option is used to filter the data by typing the our selection criteria, in the above line i have typed “So” tableau search & show in the Output which are having typed letter ‘so’ those records will only show in report.
+EX 2:
+
+Drag the [Region], [Sales] fields into work Area.
+	
+	·         Drag the [Region]into Filters shelf, then select “Wildcard” tab then select the “Contains”  then type ‘st’ then click on “OK” then report will filter the Region members and will show only “East, West” regions data, because East , West only having the letters 'st".
+
+o    EX 3: 
+§  
+	Drag the [Region]into Filters shelf, then select “Wildcard” tab then select the “Contains”  then type ‘SA’ then click on “OK” then report will filter the Region members and will show only 'NOTHING" it means empty report , because none of the Region Members having the letters "SA". (Both S, A should be one beside other it means "S" then "A").
+
+Startswith:
+
+	·         Drag the [Region], [Sales] fields into work Area.
+	·         Drag the [Region]into Filters shelf, then select “Wildcard” tab then select the “Startswith”  then type ‘S’ then click on “OK” then report will filter the Region members and will show only “South” region data.
+	·         This option is used to filter the data by typing the our selection criteria, in the above line i have typed “So” tableau search which are having substring ‘S’ at starting position then those records will only show in report.
+	·         In this example we get the output “South” only but we don’t get “East” because “s” is not starting position in the East but in the “South” starting letter is “S”.
+
+Endswith:
+	
+	·         Drag the [Region], [Sales] fields into work Area.
+	·         Drag the [Region]into Filters shelf, then select “Wildcard” tab then select the “Endswith”  then type ‘st’ then click on “OK” then report will filter the Region members and will show only “East, West” regions data.
+	·         This option is used to filter the data by typing the our selection criteria, in the above line i have typed “st” tableau search which are having substring ‘st’ at ending position then those records will only show in report.
+	
+
+In this example we get the output “East, West” only but we don’t get “Central, South” because these 2 members are having ‘th’ from last.
+
+c. Condition: We can filter the data by applying condition.
+
+	·         Drag the [Region], [Sales] fields into work Area.
+	·         And we use the Condition option to apply the multiple conditions Drag the [Region]into Filters shelf, then select “Condition” , select ‘by field’ option then select the measure field , Aggregate function, condition, then tableau will filter the data then will show the records which are satisfying the given condition.
+
+
+ By Field: This option allow us to supply 1 condition at a time.
+	
+	EX:sum([Sales])>10000 ------
+
+By Formula: This option allow us to supply more than 1 condition at a time.
+
+	EX: sum([Sales])>10000 and sum([Profit])>1000
+
+d. Top: We can filter the data by define top n records.
+
+	·         Drag the [Region], [Sales] fields into work Area.
+	·         Drag the [Region]into Filters shelf, then select “Top” , select ‘by field’ option then select the Top/Bottom Measure field , Aggregate function condition, then tableau will filter the data then will show the records which are satisfying the given condition.
+	·         EX: Top 3 Regions based up on sum([Sales])
+
+
+Regular Filters - Measures: (Quantitative Filters)
+
+	·         We can apply filter on measure fields by applying aggregation filters.
+	·         In the following example, we are applying filter on Sales which should more than or equal to 5000.
+	·         Before apply the Filter, Tableau Engine automatically defines Min & Max values
+
+Date Filters:
+
+
+We use this kind of filters to filter the Date Data type kind of Data. By using this kind of filters we can show Required Years, or Months or Quarters Data, ( Jan-2015 or Yr-2015, Q1-2013.......)
+Or We can show data for Specific range. (EX:  From 1-Jan-2011 to 12-Sep-2013,.........)
+
+EX 1: List the customers who made Transactions in Year - 2011
+
+	1) Drag [Region], [Order Date], [Customer Name] fields into Rows shelf.
+	2) Drag the one of Measure fields from Measures window into Column Shelf.
+	3) Drag the [Order Date] into Filters shelf, then it will the list , here select Years , then check the box for Year -2011.
+
+
+Tableau let's filter the Date Data in 2 Different ways.
+
+	1) Relative Date Filters.
+	2) Range Date Filters.
+
+*********************
+
+Relative Date Filters.
+
+Relative date filters are dynamic, here values are changed accordingly.
+
+EX: Relative - Current Year
+	
+	Today Date #09-Jul-2014#
+
+Description:
+
+If you ask this Month Sales Data, It will show you Jul-2014 Data.
+If you run the same report in Next month, it will show you Aug-2014 Data.
+Means here we are filtering the Data like Current month, it will change as per the Day you run the Report. (Tableau is taking the Date from Operating System)
+
+Tableau is offering the following different kind of Relative Date Filters.
+
+Years, Quarter, Months, ........
+
+EX: Today Date #09-Jul-2014#
+
+Show me the Current Year Sales.
+
+Today is #09-Jul-2014#, so it will show 2015 Data (including Future data also if database contains)
+
+	1) Drag [Region], [Order Date], [Customer Name] fields into Rows shelf.
+	
+	2) Drag the one of Measure fields from Measures window into Column Shelf.
+
+	3) Drag the [Order Date] into Filters shelf, then it will the list that contains Relative & Range Filters, here select Relative then click on Years, Then Click on "This Year" radio button.
+
+	4) As of now this report shows 2014 Data.
+
+	5) If you run the same report after 1 year, it will show 2016 Data. ( DB should have 2016 data rather than it will show empty report).
+
+EX: I want to show current Month, Quarter, Last Quarter this Year, Last month this Year, .........
+
+I want to see last 3 Years of data on the Report.
+
+*********************
+
+Range Date Filters.
+
+	•        This kind of filters allow us to define the Static range dates.
+	•        And here we can't change date data, it means it is fixed Date filters.
+	•        EX: Today we have created a report for year - 2012, if you run the same report in next year, it will show YR-2011 data only, now we can say these filter values are fixed. ( Dont consider Parameter, Quick Filters in this scenario.)
+EX:
+
+	1) Drag [Region], [Order Date], [Customer Name] fields into Rows shelf.
+	2) Drag the one of Measure fields from Measures window into Column Shelf.
+	3) Drag the [Order Date] into Filters shelf, then it will the list that contains Range Filters, here select Range then Define Starting & Ending Dates.
+	4) As of now this report shows 2015 Data.
+	5) If you run the same report after 1 year, it will show 2016 Data. ( DB should have 2016 data rather than it will show empty report).
+
+*********************
+Tableau offers filtering the data in different ways also, we can call these are static filters.
+
+	1) Year wise, Month wise, Quarter wise, Week wise ,............
+	2) Starting Date to Till end of the Date as per data in the DB.
+	3) Up to certain Ending Date from starting Date.
+
+*********************
+
+Removing Nulls Data from the Report.
+
+My data have nulls in Date Columns for Some Dates, i want to remove from the Report.
+
+EX-1:
+
+	1) Drag [Region], [Order Date], [Customer Name] fields into Rows shelf.
+	2) Drag the one of Measure fields from Measures window into Column Shelf.
+	3) Drag the [Order Date] into Filters shelf, then it will show the list that contains Range Filters, here select Relative then click on "Special", then click on "Non-null dates" option.
+	4) Now Report don't have the null Dates.
+
+Try out the following situations
+
+	1) I want to see data for Current month only.
+	2) I want to see Sales Information from 1-Jan-2015 to Today.
+	3) I want to see data for Year 2011 & 13 & 15
+	4) What is the Orders Amount for Current Quarter?
+	5) I want to see this year March Month Data. (Without using Range Filter, Use alternative approach)
+	6) I want to See Previous Year Data.
+
+
+My data have nulls in Date Columns for Some Dates, I want to remove from the Report.
+===================================================
+Filters - Measures
+
+We can filter the data on measures also by dragging the measure column & drop into filters shelf then click on "SUM" or any other Aggregate function then click o OK, then report will show filtered data.
+
+And
+
+We can filter the Measures range specific or filtering Nulls, or showing only nulls..........
+
+
+Date Filters:
+
+We use this kind of filters to filter the Date Data type kind of Data. By using this kind of filters we can show Required Years, or Months or Quarters Data, ( Jan-2015 or Yr-2015, Q1-2013.......)
+Or We can show data for Specific range. (EX:  From 1-Jan-2011 to 12-Sep-2013,.........)
+
+EX 1: List the customers who made Transactions in Year - 2011
+
+	1) Drag [Region], [Order Date], [Customer Name] fields into Rows shelf.
+	2) Drag the one of Measure fields from Measures window into Column Shelf.
+	3) Drag the [Order Date] into Filters shelf, then it will show the list Year, Quarter, Month......... , here select Years , then check the box for Year -2011.
+
+ Hide original message
+
+Tableau let's filter the Date Data in 2 Different ways.
+	
+	1) Relative Date Filters.
+	2) Range Date Filters.
+
+*********************
+
+Filters - Measures
+
+We can filter the data on measures also by dragging the measure column & drop into filters shelf then click on "SUM" or any other Aggregate function then click o OK, then report will show filtered data.
+
+And 
+
+We can filter the Measures range specific or filtering Nulls, or showing only nulls..........
+
+****************
+=============================================
+
+Quick Filters:
+
+	•        We use the Quick Filters to include or exclude the members from the report.
+	
+	•        It offers more interaction with report, It means End user can select required data instantly. If user don't want to see the data on the report, then they can deselect that specific member from Quick Filter.
+
+EX:
+
+	1) Drag [Region], [Order Date], [Customer Name] fields into Rows shelf.
+	
+	2) Drag the one of Measure fields from Measures window into Column Shelf.
+
+	3) Right click on  [Region] in the work area then click on Show "Quick Filter".
+
+
+Changing the UI:
+
+1) Single Value (List):  This option offers select only 1 member at a time or select all members by selecting "All" radio button.
+
+		It does not allow selecting multiple members from the selection criteria.
+
+2) Single Value Drop Down List:
+
+		 This option also offers select only 1 member at a time or select all members by selecting "All" radio button.
+		It does not allow selecting multiple members from the selection criteria.
+
+3) Single Value Slide Bar:
+
+		This option also offers select only 1 member at a time or select all members by selecting "All" radio button.
+		It does not allow selecting multiple members from the selection criteria.
+
+4) Drop Down Multiple Values:
+	
+		This option also offers select either at 1 or multiple members a time or select all members by selecting "All" check box.
+
+5) Drop Down Multiple Values:
+
+		This option also offers select either at 1 or multiple members a time or select all members by selecting "All" check box.
+		Here List of the values shown in the drop down list.
+
+6) Drop Down Multiple Values:
+	
+		This option also offers select either at 1 or multiple members a time or select all members by selecting "All" check box.
+		Here List of the values shown in the drop down list.
+
+7) Custom Value List:
+
+		This option also offers select either at 1 or multiple members a time or select all members by typing the characters.
+
+It will search the members which are related to your typed word.
+If type ST, it will show the data EAST, WEST then select which ever members want to show on the report.
+It is quite similar to Contains filter.
+
+*****************
+
+Similarly we can apply the Quick filters for Measures.
+
+
+***********************************************************************************************************************************
+
+
+Sets
+
+Sets - are custom fields that define a subset of data based on some 
+
+	conditions. Computed sets update as data is being changed.
+
+-> Alternatively, a set can be based on specific data point in your view.
+
+	Sets are sub set of data, which are derived from either only Dimension or combination 
+	of Dimension & Measures.
+EX: 
+
+	1) Right click on Region, cick on "set".
+	2) Click on condition  "By Field", Select the measure, define condition.(Sales>=10000)
+	3) Click on "OK".
+	4) Set has been created, it shows the list of customers whose sales are more than 10K.
+EX: Combine sets
+
+	1) We can use the sets for set analysis.
+		Set 1 = Top 3 Customers
+		Set 2 = Bottom 3 Customers
+
+2) Combination of Top 3, Bottom 3
+	Set 1 Union Set 2
+3) Right click on Set 1 then click on "Combine Sets"
+	then select option "Union"
+Additional Points:
+
+1) We can use Parameters instead of Top 3 as Top N.
+
+	And We can use Parameters instead of 10k.
+
+2) We use sets for set Analysis like Union, Intersect, Minus.
+
+
+**************************************************************************************************************************************
+
+Dual Axis:
+
+Showing 1 Measure values on top on another Measure Values, it means override the Measure Values.
+Main Usage is comparing two KPI's for any Dimension.
+
+
+EX: BUZ User Wants to see Sales, Profits of Regions in the Single Report.
+
+	1) Drag the Regions on to Rows shelf, Sales & Profit fields onto Columns Shelf.
+	2) To differentiate measures, apply different colors for both Measures.
+	3) Right click on Second measure in the work Area, then click on "Dual Axis".
+	4) Now Report will show two measure values in single pane. 
+
+Have to Keep 1st Max Value KPI then Less Value KPI.
+
+Synchronize Axis:
+
+To follow the Same Scale for both Measures.
+
+
+********************************************************************************************************************************
+
+
+How can show the Data when data is located 3 different sheets in the single XL Workbook - Data Appending
+Data Appending:
+ 
+How can show the Data when data is located 3 different sheets in the single XL Workbook
+Procedure:
+
+Below are the XL sheets, where having data for 3 Countries in 3 Sheets.
+23.png  24.png 25.png
+1) All 3 Sheets are located in single XL Workbook.
+2) Connect XL workbook (Sheet 1) to Tableau.
+3) Then Extract the Data.
+26.png        27.png
+4) Connect to the Same XL workbook Sheet2.
+29.png  30.png
+5) Define the Relationship Between DB1 & DB2. Then Right click first DB Extract, click on "Append data from data source". Then refresh Extract
+31.png     32.png
+33.png
+34.png36.png
+6) Now we are having data fro 3 Countries (Which are located in 3 XL sheets in 1 Workbook.)
+
+37.png
+ 
+=========================
+ 
+
+Data Appending: Record Level Merging
+
+(Data Appending's Principle: Metadata should be same in all Databases & Sequence of Fields)
+ 
+DB1
+
+CNT State Sales
+
+A A1 100
+A A2 200
+A A3 300
+
+DB2
+
+CNT State Sales
+
+B B1 100
+B B2 200
+B B3 300
+
+After Implement the Data Appending:
+
+CNT State Sales
+
+A A1 100
+A A2 200
+A A3 300
+B B1 100
+B B2 200
+B B3 300
+ 
+==============================
+Data Appending is not Possible since Sequence of the Columns are not same in 2 Databases.
+
+DB2
+
+CNT State Sales
+
+B B1 100
+B B2 200
+B B3 300
+
+DB1
+
+State Sales CNT
+
+A1 100 A
+A2 200 A
+A3 300 A
+==============================
+Data Appending is not Possible since  Column names are not same in 2 Databases.
+
+DB2
+
+CNT State Sales
+
+B B1 100
+B B2 200
+B B3 300
+
+
+DB1
+
+CNT             States         Sales
+
+A 		A1 		1000
+A 		A2 		2000
+A 		A3 		3000
+ 
+==============================
+Data Appending is not Possible since  Metadata is not same in 2 Databases.
+
+DB1
+
+CNT(Char 20) State(Char 20)  Sales(Integer 12)
+
+B  B1   100
+B  B2   200
+B  B3   300
+
+DB2
+
+CNT(VarChar 20)  States(Char 20)  Sales(Integer 12)
+
+A   A1   1000
+A   A2   2000
+A   A3   3000
+
+==============================
+Data Appending is POSSIBLE since  Metadata, Sequence of the Fields are same in 2 Databases.
+
+CNT(VarChar 20) State(Char 20)  Sales(Integer 12)
+
+B  B1   100
+B  B2   200
+B  B3   300
+
+
+CNT(VarChar 20)  States(Char 20)  Sales(Integer 12)
+
+A   A1   1000
+A   A2   2000
+A   A3   3000
+
+
+After Implement the Data Appending:
+
+CNT State Sales
+
+A                  A1                100
+A                  A2                 200
+A 		   A3 		     300
+B 		   B1                100
+B 		   B2                200
+B                  B3                300
+
+Data Appending Principle: Metadata, Sequence of the Columns should be same.
+
+Meta Data: Column Name, Data Type, Size)
+
+
+*************************************************************************************************************************
+
+Data Blending
+ 
+We use the Data Blending process when data is located into multiple databases. It is Horizontal merging it means Data bases are having different columns apart from common column for define the relationship.
+ 
+Example:
+ 
+The following example illustrates, how to use the two data sources to build the Report.
+ 
+
+1) Connect the Tableau with "ABC" database, Then connect to Database "XYZA" by clicking on "Connect to database"
+http://1.bp.blogspot.com/-d9ejRrUtSHs/VNw64MjULmI/AAAAAAAAAJ0/7R35F6rMO0k/s1600/7.png
+
+
+2) Once we connected to database 2, we have to define the relationship between 2 databases. Here Column "A" is common to define the Relationship. 3) Click on Data on menu bar, Click on "Edit Relationship", Then Select Primary & secondary databases then define the relationship between those 2 databases. 
+
+
+ 
+Now we can use 2 databases to build  the reports.Once we define the Relationship between 2 databases, Primary Database will be highlighted in Blue, Secondary in Orange color.
+
+ 
+ 
+ If relationship will be removed, then we get the nulls when use columns.
+from 2 databases.
+
+ 
+=====================================
+ 
+Data Blending: connect to Multiple DB (Columns Level Mapping, Column level Merging)
+
+How to connect to Multiple DB 
+ 
+Either Homogeneous : Same kind of DB like Sales (Oracle), Orders (Oracle)  
+
+or Heterogeneous : Different Kind of Databases Like Sales (Oracle), Orders (XL)...... 
+
+
+	1) Sales to Profits
+
+	2) Sales to Orders
+
+
+Blue - Primary
+Orange - Secondary
+
+DB1
+
+CNT Sales
+
+DB2
+
+CNT Orders
+
+Data Blending:(Column Level Merging)
+
+CNT, Sales, Orders
+
+DB3
+
+CNT Profits
+
+1) CNT Sales, Orders Profits (Horizontal Merging, It is Right Approach) : Data Blending
+
+2) CNT  Sales ( It is not Right Approach)
+        Orders
+        Profits
+
+**********************************************************************************************************************************
+
+
+Applying colour formatting
+
+1) Open Tableau Software & connect to the required Database. ( Coffee Chain (MS Access) has been taken as data source in this Example).
+
+2) Drag Market Field from Dimension shelf to Column shelf Drag Date Field from Dimension shelf to Row shelf.  And drag Sales field from Measures shelf to intersection of rows & columns in work area.
+
+3) Click on “+” symbol of Date field on Row shelf then we get the Quarters, & click on Quarters “+” symbol then we get the Months data.
+
+4) Drag Market Field from Dimension shelf to Colour Marks shelf, it assign the colours automatically.
+
+5) If we want to change the colours, double click on “South” on colours mark then assign the required colours.
+
+6) The following example is illustrating colour formatting is applied based on Quarters.
+
+
+Defining Starting Month of Year(Defining Fiscal Year)
+
+
+Generally Calendar Years starts with Jan Month,
+Indian Fiscal year starts with Mar Month.
+
+-> Right click on "database", click on Date Properties, click on "Fiscal Year Start"
+then define starting month of the year.
+
+Adding external Images to the Report
+
+
+	1) Basically Images are stored at Documents\My Tableau Repository\Shapes
+	2) We can add external images at this area.
+	3) Create a folder, add images into this folder.
+	4) come to the report, Drag any Dimension into Work Area, Then select "Shapes" as the mark.
+	5) Then edit the Shapes , then then Reload the Shapes in the view.
+	6) Then Select the New folder which was created in previous steps.
+	7) Then you can assign the Shapes accordingly.
+
+
+======================
+
+Create a new Folder in the Shapes Folder, then add your shapes.
+
+
+**************************************************************************************************************************************
+
+
+Date Functions - Tableau
+
+
+This Document tells about Date Calculation, How to create calculations using Date Dimension.Tableau supports the following Date formats.Tableau Supported the following parts of the Date.
+
+
+
+DATE_PART VALUES
+
+'year'  Four-digit year
+
+'quarter' 1-4
+
+'month' 1-12 or "January", "February", and so on
+
+'dayofyear' Day of the year; Jan 1 is 1, Feb 1 is 32, and so on
+
+
+'day'  1-31
+
+'weekday' 1-7 or "Sunday", "Monday", and so on
+
+'week'  1-52
+
+'hour'  0-23
+
+'minute' 0-59
+
+'second' 0-60
+
+
+Function: Dateadd:
+
+	We use this function to perform Date Calculations 
+	Like addition or subtraction at different levels.
+	Levels: Year, Quarter, Month,.........
+
+EX: dateadd('month', 2, #12-Jan-2014#)
+
+O/P: 12-Mar-2014
+
+EX: 
+	Generally once Place the Order, we deliver after 2 Months, 
+	So i want to see Deliver Date for Each Order.
+
+Steps:
+
+	1) Right click on [Order Date], click on "Create Calculated Field"
+	2) Define the Name, Syntax as like below.
+
+Name: Deliver Date
+
+Syntax: dateadd('month', 2,  [Order Date])
+
+	3) Then add the  [Order Date], [Deliver Date] to report.
+	4) Now report will show the Data at Year level, If you want to see in terms of Full date, Right click on [Order Date], click on "More" option then click on "Custom" then select "Month/Day/Year" format from the Drop down List.
+
+*************
+Function: Datediff
+
+	We use this function to find the difference between two DATES in terms of specified date parts like Year, Month, Date and it gives the O/P in integers. 
+	Once created the Calculated field, drag that into Dimension window.
+
+EX:DATEDIFF('day',[Order Date],[Ship Date] )
+
+EX: 
+
+I want to see How many days does take to deliver each Order ( Using Sample Database)
+
+Steps:
+
+	1) Right click on [Order Date], click on "Create Calculated Field".
+
+	2) Define the Name, Syntax as like below.
+
+	Name: Days taken for Deliver
+
+	Syntax: DATEDIFF('day',[Order Date],[Ship Date] )
+
+	3) Then add the  [Order Date],  [Days taken for Deliver] to report.
+
+	4) Now you can find the [Order Date], [Days taken for Deliver] on the report . Days taken for Deliver shows Numerical Number.
+
+***********************************************************
+
+Function: Datename
+
+	We use this function to extract specific part of the Date, It gives O/P as string Date Type.
+
+EX:
+
+	1) datename('year', #12-Jan-2014#)
+
+	O/P: 2014
+
+	2) datename('month', #12-Jan-2014#)
+
+	O/P: Jan
+
+	3) datename('weekday',  #12-Jan-2014#)
+
+	O/P: Sunday
+
+**********************************************************************
+
+Function: Datepart
+
+	We use this function to extract specific part of the Date,
+	 It gives O/P as Numerical Data.
+
+EX:
+
+	1) datepart('year', #12-Jan-2014#)
+	O/P: 2014
+
+	2) datepart('month', #12-Jan-2014#)
+	O/P: 1
+
+	3) datepart('weekday',  #12-Jan-2014#)
+	O/P: 1
+
+*******************************************************************************
+
+Converts a string to a datetime in the specified format. 
+
+EX:
+	DATEPARSE ("dd.MMMM.yyyy", "15.April.2014") = #April 15, 2014# 
+	DATEPARSE ("h'h' m'm' s's'", "10h 5m 3s") = #10:05:03# 
+
+**********************************************************************
+
+
+Function: Datetrunc
+
+	We use this function to get the First Date of given Date at Defined Level. (Opening Date)
+
+EX:
+	1) Datetrunc('year', #12- Feb-2014#)	
+	O/P: 1-Jan-2014
+
+	2)  Datetrunc('month', #12- Feb-2014#)
+	O/P: 1-Feb-2014
+
+EX: 
+
+I want to see what is the Day of the Year for Each Transaction ( Days are 365 or 364)
+
+	1) Create a Calculated field like below to get the First Day of the Year for Each Order.
+
+	Name: Datetrunc - Year
+
+	Syntax: DATETRUNC('year',[Order Date])
+
+	2) Create another Calculated Field
+	
+	Name: Day of the Year
+	
+	Syntax: datediff('day', [Datetrunc - Year],[Order Date])
+	
+	3) Drag the Fields [Order Date],  [Day of the Year], [Datetrunc - Year] onto Work Area.
+
+*************************************************************
+
+Function: Day, Month, Year
+
+	-> We use these functions to extracts the Specific part from the Date, It means Year, Day, Month. And it gives Integer as Output. 
+
+	-> Once you created calculated field using any of these functions, that will be moved into Measures window since this function gives O/P in Number Data type.
+EX:
+	1) day(#12-Jan-2014#)
+	O/P: 12
+
+	2) month(#12-Jan-2014#)
+	O/P:1
+
+	3) year(#12-Jan-2014#)
+	O/P:2014
+
+	5) Now you can find the [Order Date], [Deliver Date] on the report with "Month/Day/Year" format.
+
+
+**************************************************************************************************************************************
+
+Groups
+
+
+	A group is a combination of dimension members that make higher level categories.
+
+	EX: Creating Territories Using State Province Field.
+
+Description:
+
+	We are getting Country, Region, State, City Fields from Database, Customer wants to see Territory it lies between State & Region.
+
+Steps: 
+
+	1) Right click on "State or Province" Field, Click on "Create, Click on "Group".
+
+	2) Select "Alabama, Arizona, Arkansas", click on "Group", then Define the Name as "T - 1".
+
+	3) Similarly, Select "California, Colorado, Connecticut ", 
+	then Define the Name as "T - 2".
+
+	4) Now Drag the  "State or Province (group)", "State or Province" field on to Row shelf then see how group was implemented.
+
+
+Note: This is Manual Processing, If Data changes in Database, Groups will not reflects, We have to make changes Manually.
+
+EX:
+	As per Business Requirement,  We have Created Groups on "Customer Name" field & created 26 Groups like "Group -A",similarly "Group -B", "Group -C", "Group -D" ,"Group -E" .........
+	Here "Group -A" - It stores all list of customers whose name is starting with "A".
+
+Once Database has been updated, new customers has been added in Database whose Name is name is starting with "A" will not be added into "Group -A". We have to edit the existed Group & Add the new customer names to it's respective group manually, Solution for this kind of situation is using "Calculated Fields" as like below.
+
+If left([Customer_Name], 1) ="A" then "Group -A"
+elseif left([Customer_Name], 1) ="B" then "Group -B"
+.............................. end
+
+*************************************************************************************************************
+
+
+Conditional Calculations:
+
+	If any calculation you want to use in the report which is not there in database, then we create that calculation with right syntax at tableau level.
+
+	And we use the Calculations for customization purpose.
+
+For An Example: Sales less than 10 K is  "Worst Sales", >10 K and < 15 K is "Average" , >15 K and < 20 K is "Above Average" , >20 K and < 50 K is "Meet Target" , >50 K and < 75 K is "Excellent Sales." 
+
+SYNTAX:
+
+	1) If condition with 1 Possibility  without Else part
+	IF [Condition Matches] then [Matched Value]  end
+
+EX: If  sum([Sales])>15000 then "Good"  end
+
+Description: In the above example, If sales are more tan 15000 then those will be represented as "Good" (If condition matches then "Good" if Condition does not match then empty, i.e. null)
+	
+	If Sales does not more then 15000 then those values are represented by empty since we did not define else part.
+	
+	Next example will explains how out put will effect if we define else part.  
+
+
+2) If condition with 2 Possibilities including Else part
+
+Syntax:
+
+	IF [Condition Matches] then [Matched Value] else [Non Matched Value]  end
+
+EX: If  sum([Sales])>15000 then "Good" else "Average" end
+
+Description: 
+
+	In the above example, If sales are more tan 15000 then those will be represented as "Good"A (If condition matches then "Good" if Condition does not match then empty, i.e. null)
+	If Sales does not more then 15000 then those values are represented by  "Average" since we defined else part.
+
+3) If then else - more than 2 Possibilities
+
+if [Condition 1 Match] then [Value1] 
+elseif [Condition 2 Match] then [Value 2] 
+elseif [Condition 3 Match] then [Value 3] 
+elseif [Condition 4 Match] then [Value 4] 
+.....................
+Else [Value N] end 
+
+EX:
+
+	If sum([Sales]) <15000 then "Below Average"
+	elseif  sum([Sales]) >=15000 and sum([Sales]) <25000 then "Average"
+	elseif  sum([Sales]) >=25000 and sum([Sales]) <50000 then "Above Average"
+	else "Excellent" end
+=============================
+Case <EXP>
+when <Matches 1> then [Value 1]
+when <Matches 2> then [Value 2]
+when <Matches 3> then [Value 3]
+Else [Value 4] end
+
+
+
+Case [Region]
+when "Central" then "Territory - 1"
+when "East" then "Territory - 1"
+else "Territory - 2" end
+
+1) I want to Apply Different colors to Regions as per Sales Value.
+
+	<10 K - Color 1
+	>=10 K And < 15 K then Color 2
+	>=15 K And < 25 K then Color 3
+	or Color 4
+
+2) Difference between And , Or Operators in the Calculations.
+
+Create few reports with BUZ Requirement.
+
+3) I want to see 2013, 2014 data in 1 color, 2011, 2015 in another color.
+
+	(Don't use Editing Color Legend option for applying colors. Use Calculations to define colors)
+
+4) Categorize the City's into different groups by using your own business situation.
+
+5) I want apply Different shapes as per Sales Values.
+	
+	Use Question -1 as situation & define the shapes.
+
+Note:
+
+	In SQL "IN" operator is used to filter multiple Values, As of now Tableau does not have "IN" operator in the Calculation but there is an alternative that is "OR"
+
+EX: Select Country, Sales from Sales where country in ('India', 'Usa', 'UK') ----- SQL
+
+Case [Region]
+when "Central" then "Territory - 1"
+when "East" then "Territory - 1"
+else "Territory - 2" end
+
+Or
+
+If  [Region] = "Central" or   [Region] ="East" then "Territory - 1"
+else "Territory - 2" end
+
+******************************************************************************************************************************************
+
+String Functions - Tableau
+
+	This document is prepared intend to give notes on Srting Calculations.
+	Some times we get the need the of String calculations in the projects like concatenating First Name & Last Name, Converting Lower case to Upper Case or keep string in perfect (As per XL function)......
+	The following are the list of String functions. Click on each Blue color link, which taks to you that related dashboard & it gives in deapth information abut that.
+
+Calculations:
+
+	We are using Calculations to get the Customized results, which are directly not available in the Databse.
+	EX: Conditional Formatting, Customized format
+
+3 Types
+String, Date, Numerical
+
+
+String Functions - Tableau
+
+1)    ASCII
+
+	This function returns first letter of given String's ASCII value and output of this function is Integer.
+
+	EX 1: ASCII(“Tableau”) =  84
+
+Ascii value of [Customer Name], It means First Letter of [Customer Name] 's ASCII value.
+
+
+2)     CHAR:
+
+	This function converts numerical number in to character.
+
+	EX 1: char(65)= A
+	EX 2: Is converting given input Numerical value into Character as per ASCII.
+
+3)    CONTAINS:
+
+	It will check whether substring is available or not in the main string. It means it gives the Outputs as True/False
+	EX:  [Region] = South (Here [Region] is the Field and South is the Member of Region field)
+	contains([Region], "st") = False
+	contains([Region], "so") = True
+	contains([Region], "So") =True
+
+	EX 2: Verifying whether Regions are having given sub strings, it means If Region has the substring "st" and "s" then gives "True" else "False"
+	contains([Region], "st") and contains([Region], "s")
+
+
+4)    ENDSWITH:
+
+	It will check whether substring is endswith or not in the main string. It means it gives the Outputs as True/False.
+
+	EX 1: [Region] = South (Here [Region] is the Field and South is the Member of Region field)
+	ENDSWITH( [Region], 'st' ) = False
+
+	1) endwith([Region], "th") = True
+	2) endwith([Region], "k") = False
+
+
+	EX 2: 
+	     Want to show Regions in the report which are ends with "st" sub string Verifies the Region Names with specified Condition that is ends with "st", if region ends with "st" then returns "True" else "False"
+
+Steps: 
+
+	1) Created a Calculated Field with the following Syntax.
+	Name: ENDSWITH
+
+	Syntax: ENDSWITH( [Region], 'st' )
+	
+	2) Then Dragged [Region] into Work Area, [ENDSWITH] into Filters shelf, then selected "True".
+
+
+5)    FIND:
+
+	It will check the position of substring in the main string. It means it gives the Outputs as Numerical Numbers.
+
+	EX 1:
+		Find ([Region], "th") = 4
+		Find ([Region], "k") = 0
+
+	EX 2: Find where is located " " (Space) in the Customer Names
+	Steps: 
+	
+	1) Find Create a calculated field like below
+	Name: FIND
+	Syntax: Find([Customer Name], " ")
+
+	2) Drag the [Customer Name], [FIND] into work area.
+     
+	3) Then Report will show the [Customer Name] and position where located Space in the Customer Names.
+
+Note: 
+     Out put of this function is INTEGER, so it will take Sum as the Default aggregate function & gives wrong output, here we can overcome it by changing the aggregate function to Average.
+
+6)     ISDATE:
+
+	This is used to test the given string data is Date or not, if given data is date then returns “True” else "False".
+	EX:  isdate(str([Order_Date])) =  True
+        Isdate(’12-Feb-2011’) = True
+
+	EX 2: Verifying few given string data is Date or not.
+
+	1) isdate(str([Ship Date]))
+	2) isdate('Feb-25-2013')
+	3) Isdate("abcd-12-2014")
+
+7)    LEFT:
+
+	We use this function to fetch substring from starting point to specific point in the given Main String.
+
+	EX 1: Left([Customer Name],3) = Sou
+	Region = South
+	Left([Region],4) = Sout
+	
+	Ex 2: Scenario: Want to extract first 3 Characters from [Customer Name] field.
+	1) Create a Calculated Field like Below
+	Name: Left 3
+	Syntax: Left([Customer Name],3)
+
+	2)  Drag  [Customer Name], [Left 3] into Work Area
+	3) View will show the Customer Name, First 3 Letters of the Customer Name
+
+8)    LTRIM
+
+	We use this function to remove the speaces left side of the given string.
+	And this function does not remove spaces in the mid of the given string.
+	EX:
+	ltrim(" ASDF")
+	O/P: ASDF
+9)    LEN
+
+	This function count the number of characters in the given string including nulls, Spaces & returns Numerical number.
+	EX: [Region] = South (Here [Region] is the Field and South is the Member of Region field)
+	Len([Region]) = 5 ( South has 5 Characters)
+
+10) Function: MIN, MAX
+
+	MAX: Test the given multiple string data& returns Maximum as output.
+	Max(“A”, “B”)= B
+	Max(“AAAA”, “D”)= D
+Min:
+
+	This function verifies given multiple string data & it gives minimum number as output as per first character’s ASCII value.
+	EX: Min ('A', 'B') = A
+
+11) UPPER:
+
+	This function converts the given string into lower Case.
+	Similarly, Upper Function converts given string into UPPER Case.
+
+12) MID
+	This function is used to extract the substring from specific point to specific point.
+	EX: Region = South
+	Mid( [Region], 2,4) = out
+
+	EX 2:: Extract the first 4 Characters in the Customers Names.
+	nt. 1) Create a calculated field like below syntax.
+	Name: Mid
+	Syntax: mid([Customer Name], 1,4)
+
+	2) Then drag the [Customer Name], [Mid] field into work area.
+	3) Now view will show Customer Name, first 4 Characters in the Customers Names.
+
+13) REPLACE
+
+	This function is used to replace the substring by other substring.
+	EX:
+	[Region] = East, West, North, Central
+	REPLACE([Region], "st", "ASDF")
+	O/P: EaASDF, WeASDF,  North, Central
+
+	Ex 2: Want to replace "Kay" by "AAAAA" in the Customer Names
+
+	1) Create a Calculated Field like below
+	Name: Replace
+	Syntax: REPLACE( [Customer Name], "Kay", "AAAAA")
+
+	2) Drag the Customer Name, Replace into Work Area.
+
+14) RIGHT:
+
+	We use this function to fetch substring from ending point to specific point in the given Main String.
+	EX: Right([Customer Name],3)
+	Region = South
+	Right([Region],2) = th
+
+	This View: Scenario: Want to extract Latst 2 Characters from [Customer Name] field.
+
+	1) Create a Calculated Field like Below.
+	Name: Right 2
+	Syntax: Right([Customer Name],2)
+	2)  Drag  [Customer Name], [Right 2] into Work Area
+	3) View will show the Customer Name, Right 2 Letters of the Customer Name
+
+15) STARTSWITH:
+
+	This function test whether given string starts with specified substring, & returns Boolean.
+	EX:
+	[Region] = South (Here [Region] is the Field and South is the Member of Region field)
+	STARTSWITH([Region], "W") = False
+	STARTSWITH([Region], "Su") = False
+	STARTSWITH([Region], "S") = True
+	STARTSWITH([Region], "So") = True
+
+
+Changing Default Properties:
+
+	We can change  the Default properties like Color, Shape, Aggregations,
+	Comments, Aliases,Sort, Number Format.
+
+EX:
+
+	1) Drag the [Region], [Sales] onto Work Area.
+	2) [Sales] takes the Sum as default aggregate function.
+	3) Right click on [Sales] in measures window, click on Default Properties,
+	click on "Aggregation", select "AVG"
+	4) Again drag the [Sales], Now it takes "AVG" as default aggregate.
+
+And we can use this option & change the Data Format,
+
+EX:
+
+	1) Drag the Region on to Rows shelf, Sales, Profit on the Column Shelf.
+	2) Create a calculated field to get the Profit % like below,
+
+Name: Profit %
+
+Syntax: Sum([Profit])/sum([Sales])
+
+	4) Add the above calculated field to Column shelf, then this field gives the O/P t as 0, because we did not define the no of decimals, integers.
+	5) Now right click on Profit % in Measures window, click on change Default Properties, click on Number format, then select "Percentage"
+	6) Now we get the O/P in percentages.
+
+
+Parameters - Tableau
+
+	Parameters – Parameters are dynamic variables that can be used as placeholders in formulas.
+	And we can replace constant value by dynamic value
+
+EX: Dynamically selecting Columns (Fields), Dynamically selecting Top 10,
+Bottom N
+
+EX: Dynamically Select Measure Field.
+
+	1) Right click in dimension window, click on Create Parameter.
+	2) Define the Type: String,
+	3) Select List option since we are defining manually.
+		Sales
+		Profit
+	4) Create a calculation like below,
+	if [Parameter] = "Sales" then [Sales] else [Profit] end
+	5) Drag the Region onto Rows shelf, drag the above calculation into Column's shelf.
+	6) Right click on Parameter, click on "Show Parameter Calculation"
+	7) Now we can Select Either [Sales] or [Profit].
+
+Note: As of  now in Tableau we can select 1 Value max at a time.
+
+1) Dynamically select the Color.
+
+Sol:
+	1) Create a Parameter “Color” with the Following values like the below screen shots.
+	Green, Blue, Red, Orange
+	2) Drag Region onto Row Shelf, Sales onto Column Shelves.
+	3) Create a Calculated field like the below
+
+Name: Dynamic Color
+
+Syntax:
+
+	case [Color]
+	when "Green" then "Green"
+	when "Blue" then "Blue"
+	when "Red" then "Red"
+	when "Orange" then "Orange"
+	end
+---- ------ Here [Color] is the Parameter which was created in the 1st step.
+4) Drag “Dynamic Color” onto Colors mark.
+5) Right click on “Color” parameter, click on “Show Parameter Control”.
+6) Now select colors 1 by 1 from “Parameter” then assign right colors.
+
+Note: As far now (up to V 9), we can pass Max 1 Value through Parameter, it doesn't allow to pass multiple Values.
+
+Parameter - Options:
+
+	1) If you to show parameter values from any specific column, Select List Radio Button
+	from Allowable Options then select Add from Field, then select the Field.
+
+	2) If you want to create a Parameter on specific column, right click on that,
+	click on "Create Parameter".
+
+	Additional Information:
+	1) We can get the values into parameter either by right click on specific field & click on "Create Parameter".
+
+	or
+
+	Right click on white space in measures pane, click on "Create Parameter" then define the "Data Type" then click on "List" then click on "Add values from Field".
+
+
+
+
+Hierarchies:
+
+
+We use Hierarchies to organize the data from Top Level information to Bottom level Information.
+Top Level Information hold the Summary data, Bottom Level holds detail level data.
+
+Sum-up the bottom level data to get next level data.
+
+Creating Hierarchies:Geographical
+
+	1) Before start creating Hierarchies, define no. of level &
+	Which level data holds in which column
+	2) The following are sequence of levels
+	Region -> State -> City
+	3) Right click on Region, click on "Create Hierarchy".

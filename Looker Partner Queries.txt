@@ -1,0 +1,190 @@
+------------- Redistributed Campaigns-----------
+
+select count(distinct redistributedcamp.campaign_id) 
+from xamplify_test.xa_campaign_d vendorcamp,
+xamplify_test.xa_campaign_d redistributedcamp,
+xamplify_test.xa_user_d vendorcompany
+where vendorcamp.campaign_id=redistributedcamp.parent_campaign_id
+and vendorcompany.user_id=vendorcamp.customer_id
+and vendorcompany.company_id=399
+
+----------Total Recipients----------------
+
+select count(distinct receivedcamp.user_id) as total_recepients
+from xamplify_test.xa_campaign_d vendorcamp, 
+xamplify_test.xa_campaign_d redistributedcamp,
+xamplify_test.xa_campaign_user_userlist_d receivedcamp,
+xamplify_test.xa_user_d vendorcompany
+where vendorcamp.campaign_id=redistributedcamp.parent_campaign_id
+and redistributedcamp.campaign_id=receivedcamp.campaign_id
+and vendorcamp.customer_id= vendorcompany.user_id
+and vendorcompany.company_id=399
+
+
+---------- Email Opened----------
+select
+count(distinct emaillog.user_id) as email_opened
+from xamplify_test.xa_campaign_d vendorcamp, 
+xamplify_test.xa_campaign_d redistributedcamp,
+xamplify_test.xa_emaillog_d emaillog,
+xamplify_test.xa_campaign_user_userlist_d receivedcamp,
+xamplify_test.xa_user_d vendorcompany
+where vendorcamp.campaign_id=redistributedcamp.parent_campaign_id
+and redistributedcamp.campaign_id=emaillog.campaign_id
+and redistributedcamp.campaign_id=receivedcamp.campaign_id
+and vendorcamp.customer_id= vendorcompany.user_id
+and receivedcamp.user_id=emaillog.user_id
+and vendorcompany.company_id=399
+
+----------- Views------------
+
+select
+count(distinct emaillog.id) as email_opened
+from xamplify_test.xa_campaign_d vendorcamp, 
+xamplify_test.xa_campaign_d redistributedcamp,
+xamplify_test.xa_emaillog_d emaillog,
+xamplify_test.xa_campaign_user_userlist_d receivedcamp,
+xamplify_test.xa_user_d vendorcompany
+where vendorcamp.campaign_id=redistributedcamp.parent_campaign_id
+and redistributedcamp.campaign_id=emaillog.campaign_id
+and redistributedcamp.campaign_id=receivedcamp.campaign_id
+and vendorcamp.customer_id= vendorcompany.user_id
+and receivedcamp.user_id=emaillog.user_id
+and vendorcompany.company_id=399
+
+
+------------Redistributed Camapigns---------
+
+select vendorcamp.campaign_name,
+count(distinct partnercompany.company_id) as partners,
+count(distinct redistributedcamp.campaign_id) as redistribured_campaigns
+from xamplify_test.xa_campaign_d vendorcamp,
+xamplify_test.xa_campaign_d redistributedcamp,
+xamplify_test.xa_user_d vendorcompany,
+xamplify_test.xa_user_d partnercompany
+where vendorcamp.campaign_id=redistributedcamp.parent_campaign_id
+and vendorcamp.customer_id=vendorcompany.user_id
+and redistributedcamp.customer_id=partnercompany.user_id
+and vendorcompany.company_id=399
+group by 1
+order by 2 desc
+
+------------------ Redistributed Campaign Stats------------
+
+select 
+partnercompanyname.company_name as Partner_company,
+redistributedcamp.campaign_name as Redistributed_campaign_name,
+count(distinct receivedcamp.user_id) as total_recepients,
+count(distinct emaillog.user_id) as active_recipients, 
+count(distinct emaillog.id) as views
+from xamplify_test.xa_campaign_d vendorcamp, 
+xamplify_test.xa_campaign_d redistributedcamp,
+xamplify_test.xa_campaign_user_userlist_d receivedcamp,
+xamplify_test.xa_emaillog_d emaillog,
+xamplify_test.xa_user_d vendorcompany,
+xamplify_test.xa_user_d partnercompany,
+xamplify_test.xa_company_d partnercompanyname
+where vendorcamp.campaign_id=redistributedcamp.parent_campaign_id
+and redistributedcamp.campaign_id=receivedcamp.campaign_id
+and redistributedcamp.campaign_id=emaillog.campaign_id
+and vendorcamp.customer_id= vendorcompany.user_id
+and redistributedcamp.customer_id=partnercompany.user_id
+and partnercompany.company_id=partnercompanyname.company_id
+and vendorcompany.company_id=399
+group by 1,2
+order by 3 desc
+
+-----------Campaigntype wise users and Views-------------
+
+select c.campaign_type, count(distinct cul.user_id) as total_recepients,
+count(distinct el.user_id) as active_recipients, count(distinct el.id) as views
+from xamplify_test.xa_campaign_d c, 
+xamplify_test.xa_campaign_d p,
+xamplify_test.xa_campaign_user_userlist_d cul,
+xamplify_test.xa_emaillog_d el,
+xamplify_test.xa_user_d ud
+where p.campaign_id=c.parent_campaign_id
+and c.campaign_id=cul.campaign_id
+and c.campaign_id=el.campaign_id
+and p.customer_id= ud.user_id
+and ud.company_id=399
+group by 1
+
+-------------- Top 10 Campaigns by views and users------------
+
+select c.campaign_name,
+ count(distinct cul.user_id) as totl_recipients,
+count(distinct el.user_id) as active_recipients,
+count(distinct el.id) as views
+from xamplify_test.xa_campaign_d c, 
+xamplify_test.xa_campaign_d p,
+xamplify_test.xa_campaign_user_userlist_d cul,
+xamplify_test.xa_emaillog_d el,
+xamplify_test.xa_user_d ud
+where p.campaign_id=c.parent_campaign_id
+and c.campaign_id=cul.campaign_id
+and c.campaign_id=el.campaign_id
+and p.customer_id= ud.user_id
+and ud.company_id=399
+group by 1
+order by 2 desc
+limit 10 
+
+
+--------------- Last 1 month Campaigns by views and users----------
+
+select c.campaign_name,
+ count(distinct cul.user_id) as total_recipients,
+count(distinct el.user_id) as active_recipients,
+count(distinct el.id) as views
+from xamplify_test.xa_campaign_d c, 
+xamplify_test.xa_campaign_d p,
+xamplify_test.xa_campaign_user_userlist_d cul,
+xamplify_test.xa_emaillog_d el,
+xamplify_test.xa_user_d ud
+where p.campaign_id=c.parent_campaign_id
+and c.campaign_id=cul.campaign_id
+and c.campaign_id=el.campaign_id
+and p.customer_id= ud.user_id
+and ud.company_id=399
+and c.created_time >= now() - interval '30 days'
+group by 1
+order by 2 desc
+
+
+
+
+----------------------- Looker Code----------------
+
+
+  measure: Dates  {
+     type: string
+  sql:
+  CASE
+  WHEN {% parameter cohort_size.cohort_filter %} = 'User Signup Month'
+  THEN ${users.created_month} = ${cohort_size.cohort}
+  WHEN {% parameter cohort_size.cohort_filter %} = 'Gender'
+  THEN ${users.gender} = ${cohort_size.cohort}
+  WHEN {% parameter cohort_size.cohort_filter %} = 'Age Group'
+  THEN ${users.age_tier} = ${cohort_size.cohort}
+  WHEN {% parameter cohort_size.cohort_filter %} = 'Traffic Source'
+  THEN ${users.traffic_source} = ${cohort_size.cohort}
+  ELSE ${users.created_month} = ${cohort_size.cohort}
+  END
+  ;;
+}
+
+  dimension: cohort_size {
+    view_label: "Cohort"
+    
+      sql: SELECT
+      CASE
+      WHEN {% parameter date_filter %} = '4 Quarters'
+      THEN TO_CHAR('month', time)
+      WHEN {% parameter cohort_filter %} = 'Gender'
+      THEN users.gender
+      WHEN {% parameter cohort_filter %} = 'Traffic Source'
+      THEN users.traffic_source;;
+      
+      }
+
