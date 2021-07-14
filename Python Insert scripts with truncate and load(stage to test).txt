@@ -1,0 +1,1225 @@
+------------------------------------------------------test1.xa_user_d----------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_user_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_user_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""
+    CREATE TABLE test1.xa_user_d
+    (
+    user_id integer NOT NULL,
+    email_id character varying(255) ,
+    firstname character varying(255),
+    lastname character varying(255) ,
+    status character varying ,
+    country character varying(45) ,
+    city character varying(45),
+    zip character varying(45) ,
+    datereg timestamp without time zone,
+    datelastlogin timestamp without time zone,
+    created_time timestamp without time zone,
+    updated_time timestamp without time zone,
+    updated_by integer,
+    mobile_number character varying(45),
+    company_id integer,
+    state character varying ,
+    datereg_key integer,
+    CONSTRAINT xa_user_d_pkey PRIMARY KEY (user_id),
+    CONSTRAINT xa_user_d_email_id_key UNIQUE (email_id)
+    );
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""select
+ user_id ,
+ email_id ,
+ firstname,
+ lastname ,
+ status,
+ country ,
+ city ,
+ zip ,
+ datereg ,
+ datelastlogin,
+ created_time ,
+ updated_time ,
+ updated_by ,
+ mobile_number ,
+ company_id ,
+ state ,
+ (split_part(datereg::text , '-',1)||split_part(datereg::text , '-',2)||left(split_part(datereg::text , '-',3),2))::int datereg_key 
+from
+ public.xt_user_profile
+
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_user_d( user_id,
+    email_id,
+    firstname,
+    lastname,
+    status,
+    country,
+    city,
+    zip,
+    datereg,
+    datelastlogin,
+    created_time,
+    updated_time,
+    updated_by,
+    mobile_number,
+    company_id,
+    state,
+    datereg_key
+) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",row)
+cur_target.execute("select count(*) from test1.xa_user_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+cur_source.execute("select count(*) from public.xt_user_profile")
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+------------------------------------------------test1.xa_company_d
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_company_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_company_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""
+    CREATE TABLE test1.xa_company_d
+(
+    company_id integer NOT NULL,
+    company_name character varying(250) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    email_id character varying(250) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    phone character varying(50) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    country character varying(250) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    CONSTRAINT xa_company_d_pkey PRIMARY KEY (company_id)
+);
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""select
+ company_id,
+ company_name,
+ email_id,
+ phone,
+ country
+from
+ public.xt_company_profile
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_company_d(company_id,
+    company_name,
+    email_id,
+    phone,
+    country)
+                values(%s,%s,%s,%s,%s)""",row)
+cur_target.execute("select count(*) from test1.xa_company_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+cur_source.execute("select count(*) from public.xt_company_profile")
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+------------------------------------------test1.xa_role_d------------------------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_role_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_role_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""
+    CREATE TABLE test1.xa_role_d
+(
+    role_id integer NOT NULL DEFAULT 0,
+    role character varying(50) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    description character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    CONSTRAINT xa_role_d_pkey PRIMARY KEY (role_id)
+);
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT 
+ role_id,
+ role,
+ description
+FROM
+public.xt_role
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_role_d( role_id,
+    role,
+    description)
+                values(%s,%s,%s)""",row)
+cur_source.execute("select count(*) from public.xt_role")
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+cur_target.execute("select count(*) from test1.xa_role_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+-----------------------------------------------------test1.xa_campaign_d-------------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_campaign_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_campaign_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""
+    CREATE TABLE test1.xa_campaign_d
+    (
+    campaign_id integer NOT NULL,
+    customer_id integer,
+    campaign_name character varying(255) COLLATE pg_catalog."default",
+    campaign_type character varying(255) COLLATE pg_catalog."default",
+    campaign_schedule_type character varying(255) COLLATE pg_catalog."default",
+    created_time timestamp without time zone,
+    launch_time timestamp without time zone,
+    parent_campaign_id integer,
+    is_launched boolean,
+    to_partner boolean,
+    vendor_organization_id integer,
+    created_time_key integer,
+    CONSTRAINT xa_campaign_d_pkey PRIMARY KEY (campaign_id)
+    )
+    ;
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT 
+ campaign_id,
+ customer_id,
+ campaign_name,
+ campaign_type,
+ campaign_schedule_type,
+ created_time,
+ launch_time,
+ parent_campaign_id,
+ is_launched,
+ to_partner,
+ vendor_organization_id,
+ (split_part(created_time::text , '-',1)||split_part(created_time::text , '-',2)||
+ left(split_part(created_time::text , '-',3),2))::int created_time_key
+FROM 
+public.xt_campaign
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_campaign_d(campaign_id,
+    customer_id,
+    campaign_name,
+    campaign_type,
+    campaign_schedule_type ,
+    created_time,
+    launch_time,
+    parent_campaign_id,
+    is_launched,
+    to_partner,
+    vendor_organization_id,
+    created_time_key)
+                values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",row)
+cur_source.execute("select count(*) from public.xt_campaign")
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+cur_target.execute("select count(*) from test1.xa_campaign_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+-----------------------------------------------------teat1.xa_user_list_d
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_user_list_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_user_list_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""
+    CREATE TABLE test1.xa_user_list_d
+(
+    user_list_key SERIAL,
+    user_list_id integer NOT NULL,
+    user_list_name character varying(256) COLLATE pg_catalog."default",
+    customer_id integer,
+    updated_by integer,
+    created_time timestamp without time zone,
+    is_partner_userlist boolean,
+    listby_partner_id integer,
+    first_name character varying(256) COLLATE pg_catalog."default",
+    last_name character varying(256) COLLATE pg_catalog."default",
+    contact_company character varying(256) COLLATE pg_catalog."default",
+    job_titile character varying(256) COLLATE pg_catalog."default",
+    email_id character varying(256) COLLATE pg_catalog."default",
+    address character varying(256) COLLATE pg_catalog."default",
+    city character varying(256) COLLATE pg_catalog."default",
+    state character varying(256) COLLATE pg_catalog."default",
+    zip_code character varying(256) COLLATE pg_catalog."default",
+    country character varying(256) COLLATE pg_catalog."default",
+    mobile_number character varying(256) COLLATE pg_catalog."default",
+    company_name character varying(256) COLLATE pg_catalog."default",
+    CONSTRAINT xa_user_list_key_pkey PRIMARY KEY (user_list_key)
+)
+    ;
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT
+ uul.user_list_id,
+ ul.user_list_name,
+ up.user_id customer_id,
+ ul.updated_by,
+ ul.created_time,
+ is_partner_userlist,
+ uul.user_id AS listby_partner_id
+FROM
+ public.xt_user_profile up
+JOIN public.xt_user_list ul ON (up.user_id = ul.customer_id)
+JOIN public.xt_user_userlist uul ON uul.user_list_id = ul.user_list_id
+ORDER BY user_list_id
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into test1.xa_user_list_d( user_list_id,
+    user_list_name,
+    customer_id,
+    updated_by,
+    created_time,
+    is_partner_userlist,
+    listby_partner_id )
+                values(%s,%s,%s,%s,%s,%s,%s)""",row)
+cur_source.execute("""select count(*) from (SELECT
+ uul.user_list_id,
+ ul.user_list_name,
+ up.user_id customer_id,
+ ul.updated_by,
+ ul.created_time,
+ is_partner_userlist,
+ uul.user_id AS listby_partner_id
+FROM
+ public.xt_user_profile up
+JOIN public.xt_user_list ul ON (up.user_id = ul.customer_id)
+JOIN public.xt_user_userlist uul ON uul.user_list_id = ul.user_list_id)e""")
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+cur_target.execute("select count(*) from test1.xa_user_list_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+-----------------------------------------------------test1.xa_campaign_user_userlist-----------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_campaign_user_userlist_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_campaign_user_userlist_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""
+    CREATE TABLE test1.xa_campaign_user_userlist_d
+(
+    id integer NOT NULL,
+    campaign_id integer NOT NULL,
+    user_list_id integer NOT NULL,
+    user_id integer NOT NULL,
+    email_id character varying(255) COLLATE pg_catalog."default",
+    company_name character varying(255) COLLATE pg_catalog."default",
+    firstname character varying(255) COLLATE pg_catalog."default",
+    lastname character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT xa_campaign_user_userlist_pkey PRIMARY KEY (id)
+)
+    ;
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT DISTINCT cuul.id,cuul.campaign_id,cuul.user_list_id,cuul.user_id,up.email_id,cp.company_name,up.firstname,up.lastname
+FROM public.xt_campaign_user_userlist cuul
+JOIN public.xt_campaign c ON cuul.campaign_id = c.campaign_id
+JOIN public.xt_user_list ul ON cuul.user_list_id = ul.user_list_id
+JOIN public.xt_user_profile up ON up.user_id = cuul.user_id
+JOIN public.xt_company_profile cp ON up.company_id = cp.company_id
+ORDER BY cuul.campaign_id
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into test1.xa_campaign_user_userlist_d(id,
+    campaign_id,
+    user_list_id,
+    user_id,
+    email_id,
+    company_name,
+    firstname,
+    lastname)
+                values(%s,%s,%s,%s,%s,%s,%s,%s)""",row)
+cur_source.execute("""select count(*) from (SELECT DISTINCT cuul.id,cuul.campaign_id,cuul.user_list_id,cuul.user_id,up.email_id,cp.company_name,
+up.firstname,up.lastname
+FROM public.xt_campaign_user_userlist cuul
+JOIN public.xt_campaign c ON cuul.campaign_id = c.campaign_id
+JOIN public.xt_user_list ul ON cuul.user_list_id = ul.user_list_id
+JOIN public.xt_user_profile up ON up.user_id = cuul.user_id
+JOIN public.xt_company_profile cp ON up.company_id = cp.company_id
+ORDER BY cuul.campaign_id)e""")
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+cur_target.execute("select count(*) from test1.xa_campaign_user_userlist_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+------------------------------------------------------test1.xa_videofiles-------------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_videofiles_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_videofiles_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""
+   CREATE TABLE test1.xa_videofiles_d
+(
+    id integer NOT NULL,
+    customer_id integer,
+    title character varying COLLATE pg_catalog."default",
+    created_time timestamp without time zone,
+    CONSTRAINT xa_videofiles_d_pkey PRIMARY KEY (id),
+    CONSTRAINT video_file_fkey FOREIGN KEY (customer_id)
+        REFERENCES test1.xa_user_d (user_id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+)
+    ;
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""select  id ,
+   customer_id ,
+   title ,
+   created_time  from public.xt_video_files 
+where customer_id in (select distinct user_id from public.xt_user_profile) 
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_videofiles_d(id,
+    customer_id,
+    title,
+    created_time)
+                values(%s,%s,%s,%s)""",row)
+cur_source.execute("""select count(*) from (select  id ,
+   customer_id ,
+   title ,
+   created_time  from public.xt_video_files 
+where customer_id in (select distinct user_id from public.xt_user_profile))e""")
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+cur_target.execute("select count(*) from test1.xa_videofiles_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+--------------------------------------------------------------test1.xa_emailtemplates_d------------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_emailtemplates_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_emailtemplates_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_emailtemplates_d
+(
+    id integer NOT NULL,
+    user_id integer,
+    name character varying COLLATE pg_catalog."default",
+    created_time timestamp without time zone,
+    type character varying COLLATE pg_catalog."default",
+    CONSTRAINT xa_emailtemplates_d_pkey PRIMARY KEY (id),
+    CONSTRAINT email_template_fkey FOREIGN KEY (user_id)
+        REFERENCES test1.xa_user_d (user_id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+)
+    ;
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""select
+ id ,
+ user_id ,
+ name ,
+ created_time ,
+ type
+from
+ public.xt_email_templates 
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_emailtemplates_d( id,
+    user_id,
+    name,
+    created_time,
+    type)
+                values(%s,%s,%s,%s,%s)""",row)
+cur_source.execute("""select count(*) from (select
+ id ,
+ user_id ,
+ name ,
+ created_time ,
+ type
+from
+ public.xt_email_templates )e""")
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+cur_target.execute("select count(*) from test1.xa_emailtemplates_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+----------------------------------------------------test1.xa_team_member_d----------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_team_member_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_team_member_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_team_member_d
+(
+    id integer NOT NULL,
+    team_member_id integer,
+    email_id character varying(255) COLLATE pg_catalog."default",
+    firstname character varying(255) COLLATE pg_catalog."default",
+    lastname character varying(255) COLLATE pg_catalog."default",
+    status character varying(255) COLLATE pg_catalog."default",
+    created_time timestamp without time zone,
+    company_id integer,
+    CONSTRAINT team_member_id_primary_key PRIMARY KEY (id)
+)
+    ;
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT DISTINCT id,team_member_id,up.email_id,
+up.firstname,up.lastname,tm.status,tm.created_time,tm.company_id
+FROM public.xt_team_member tm
+LEFT JOIN public.xt_user_profile up ON (up.user_id = tm.team_member_id) 
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_team_member_d(id,
+team_member_id,
+email_id,
+firstname,
+lastname, 
+STATUS,
+created_time,
+company_id) values(%s,%s,%s,%s,%s,%s,%s,%s)""",row)
+
+cur_source.execute("""select count(*) from (SELECT DISTINCT id,team_member_id,up.email_id,
+up.firstname,up.lastname,tm.status,tm.created_time,tm.company_id
+FROM public.xt_team_member tm
+LEFT JOIN public.xt_user_profile up ON (up.user_id = tm.team_member_id))e""")
+
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+
+cur_target.execute("select count(*) from test1.xa_team_member_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+-----------------------------------------------test1.xa_socialconn_d-----------------------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_socialconn_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_socialconn_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_socialconn_d
+	(
+    id integer NOT NULL,
+    user_id integer,
+    profile_name character varying COLLATE pg_catalog."default",
+    source character varying COLLATE pg_catalog."default",
+    CONSTRAINT xa_socialconn_d_pkey PRIMARY KEY (id)
+	)    ;
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT 
+ id,
+ user_id,
+ profile_name,
+ source
+FROM 
+public.xt_social_connection 
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_socialconn_d(id,
+    user_id,
+    profile_name,
+    source)
+                values(%s,%s,%s,%s)""",row)
+
+cur_source.execute("""select count(*) from 
+                   public.xt_social_connection""")
+
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+
+cur_target.execute("select count(*) from test1.xa_socialconn_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+-------------------------------------------------------------test1.xa_date_dim-------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_his",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_date_dim');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_date_dim""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_date_dim
+(
+    date_key integer NOT NULL,
+    date date,
+    month_name character varying(50) COLLATE pg_catalog."default",
+    cal_year integer,
+    cal_dayofqtr integer,
+    cal_dayofweek integer,
+    cal_dayofyear integer,
+    cal_month integer,
+    cal_quarter integer,
+    cal_week integer,
+    yearqtr character varying(4) COLLATE pg_catalog."default",
+    CONSTRAINT date_key_pk PRIMARY KEY (date_key)
+);
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""select * from xamplify_test.xa_date_dim 
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_date_dim
+                values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",row)
+
+cur_source.execute("""select count(*) from 
+                   xamplify_test.xa_date_dim """)
+
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+
+cur_target.execute("select count(*) from test1.xa_date_dim")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+---------------------------------------------test1.xa_xtremandlog_d--------------------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_xtremandlog_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_xtremandlog_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_xtremandlog_d
+	 (
+    id integer NOT NULL,
+    user_id integer,
+    campaign_id integer,
+    action_id integer,
+    session_id character varying(255) COLLATE pg_catalog."default",
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
+    CONSTRAINT xa_xtremandlog_d_pkey PRIMARY KEY (id),
+    CONSTRAINT xl_campaign_id_fkey FOREIGN KEY (campaign_id)
+        REFERENCES test1.xa_campaign_d (campaign_id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+	 )    ;
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT 
+ a.id,
+ a.user_id,
+a.campaign_id,
+ a.action_id,
+ a.session_id,
+ a.start_time,
+a. end_time
+FROM
+public.xt_xtremand_log a,public.xt_campaign b 
+where a.campaign_id=b.campaign_id 
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into test1.xa_xtremandlog_d(id,
+    user_id,
+    campaign_id,
+    action_id,
+    session_id,
+    start_time,
+    end_time)
+                values(%s,%s,%s,%s,%s,%s,%s)""",row)
+
+cur_source.execute("""select count(*) from(SELECT 
+ a.id,
+ a.user_id,
+a.campaign_id,
+ a.action_id,
+ a.session_id,
+ a.start_time,
+a. end_time
+FROM
+public.xt_xtremand_log a,public.xt_campaign b 
+where a.campaign_id=b.campaign_id) e
+                   """)
+
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+
+cur_target.execute("select count(*) from test1.xa_xtremandlog_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+-------------------------------------------------------------test1.xa_emaillog_d-----------------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_emaillog_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_emaillog_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_emaillog_d
+(
+    id integer NOT NULL,
+    user_id integer,
+    action_id integer,
+    campaign_id integer,
+    "time" timestamp without time zone,
+    CONSTRAINT xa_emaillog_d_pkey PRIMARY KEY (id),
+    CONSTRAINT el_campaign_id_fkey FOREIGN KEY (campaign_id)
+        REFERENCES test1.xa_campaign_d (campaign_id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT 
+ a.id,
+ a.user_id,
+ a.action_id,
+ a.campaign_id,
+ a."time"
+FROM
+public.xt_email_log a ,public.xt_campaign b where a.campaign_id=b.campaign_id
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into  test1.xa_emaillog_d(id,
+    user_id,
+    action_id,
+    campaign_id,
+    "time")
+                values(%s,%s,%s,%s,%s)""",row)
+
+cur_source.execute("""select count(*) from(SELECT 
+ a.id,
+ a.user_id,
+ a.action_id,
+ a.campaign_id,
+ a."time"
+FROM
+public.xt_email_log a ,public.xt_campaign b where a.campaign_id=b.campaign_id) e
+                   """)
+
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+
+cur_target.execute("select count(*) from test1.xa_emaillog_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+----------------------------test1.xa_campaign_deal_registration_d----------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_campaign_deal_registration_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_campaign_deal_registration_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_campaign_deal_registration_d
+    (
+    id integer NOT NULL,
+    created_by integer,
+    campaign_id integer NOT NULL,
+    lead_id integer,
+    email character varying(100) COLLATE pg_catalog."default",
+    company character varying(255) COLLATE pg_catalog."default",
+    first_name character varying(255) COLLATE pg_catalog."default",
+    last_name character varying(255) COLLATE pg_catalog."default",
+    lead_street character varying(255) COLLATE pg_catalog."default",
+    lead_city character varying(255) COLLATE pg_catalog."default",
+    lead_state character varying(255) COLLATE pg_catalog."default",
+    postal_code character varying(255) COLLATE pg_catalog."default",
+    lead_country character varying(255) COLLATE pg_catalog."default",
+    title character varying(100) COLLATE pg_catalog."default",
+    phone character varying(100) COLLATE pg_catalog."default",
+    deal_type character varying(255) COLLATE pg_catalog."default",
+    website character varying(255) COLLATE pg_catalog."default",
+    created_time timestamp without time zone,
+    updated_time timestamp without time zone,
+    estimated_closed_date timestamp without time zone,
+    opportunity_amount double precision,
+    parent_campaign_id integer,
+    partner_company_id integer,
+    partner_company_name character varying(255) COLLATE pg_catalog."default",
+    is_deal boolean,
+    opportunity_role character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT deal_reg_pkey PRIMARY KEY (id),
+    CONSTRAINT campaign_deal_cid_fkey FOREIGN KEY (campaign_id)
+        REFERENCES test1.xa_campaign_d (campaign_id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+
+    );
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT id,created_by,campaign_id,lead_id,email,company,first_name,last_name,
+lead_street,lead_city,lead_state,postal_code,lead_country,
+title,cd.phone,deal_type,cd.website,created_time,updated_time,estimated_closed_date,opportunity_amount,
+parent_campaign_id,partner_company_id,cp.company_name AS partner_company_name,is_deal, opportunity_role
+FROM public.xt_campaign_deal_registration cd
+JOIN public.xt_company_profile cp ON (cd.partner_company_id = cp.company_id)
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into test1.xa_campaign_deal_registration_d(id,
+ created_by,
+ campaign_id,
+ lead_id,
+ email,
+ company,
+ first_name,
+ last_name,
+ lead_street,
+ lead_city,
+ lead_state,
+ postal_code,
+ lead_country,
+ title,
+ phone,
+ deal_type,
+ website, 
+ created_time,
+ updated_time,
+ estimated_closed_date,
+ opportunity_amount,
+ parent_campaign_id,
+ partner_company_id,
+ partner_company_name, 
+ is_deal,
+ opportunity_role)
+                values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",row)
+
+cur_source.execute("""select count(*) from(SELECT id,created_by,campaign_id,lead_id,email,company,first_name,last_name,
+lead_street,lead_city,lead_state,postal_code,lead_country,
+title,cd.phone,deal_type,cd.website,created_time,updated_time,estimated_closed_date,opportunity_amount,
+parent_campaign_id,partner_company_id,cp.company_name AS partner_company_name,is_deal, opportunity_role
+FROM public.xt_campaign_deal_registration cd
+JOIN public.xt_company_profile cp ON (cd.partner_company_id = cp.company_id)) e
+                   """)
+
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+
+cur_target.execute("select count(*) from test1.xa_campaign_deal_registration_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+--------------------------------test1.xa_campaign_deal_status_d-------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_campaign_deal_status_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_campaign_deal_status_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_campaign_deal_status_d
+    (
+    id integer,
+    deal_id integer,
+    deal_status character varying(100) COLLATE pg_catalog."default",
+    created_time timestamp without time zone,
+    updated_time timestamp without time zone,
+    created_by integer,
+    updated_by integer,
+    CONSTRAINT deal_id_fkey FOREIGN KEY (deal_id)
+        REFERENCES test1.xa_campaign_deal_registration_d (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+	);
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT *
+FROM public.xt_campaign_deal_status 
+where deal_id in ((select distinct id from public.xt_campaign_deal_registration))
+;
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into test1.xa_campaign_deal_status_d(id,
+    deal_id,
+    deal_status,
+    created_time,
+    updated_time,
+    created_by,
+    updated_by)
+                values(%s,%s,%s,%s,%s,%s,%s)""",row)
+
+cur_source.execute("""select count(*) from(SELECT *
+FROM public.xt_campaign_deal_status 
+where deal_id in (select distinct id from public.xt_campaign_deal_registration)) e
+                   """)
+
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+
+cur_target.execute("select count(*) from test1.xa_campaign_deal_status_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+----------------------------------------------test1.xa_user_role_d-----------------------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="xamplify_stage",user="postgres",
+                      host="107.170.192.65",password="B!U;X>z9@Dhq$dKT",
+                      port="5432")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_user_role_d');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_user_role_d""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_user_role_d
+	(
+    user_id integer NOT NULL DEFAULT 0,
+    role_id integer NOT NULL DEFAULT 0,
+    CONSTRAINT xt_user_role_pkey PRIMARY KEY (user_id, role_id)
+	);
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""select a.* from 
+public.xt_user_role a,public.xt_user_profile b
+where a.user_id=b.user_id;
+""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into test1.xa_user_role_d(user_id,role_id)
+values(%s,%s)""",row)
+
+cur_source.execute("""select count(*) from(select a.* from 
+public.xt_user_role a,public.xt_user_profile b
+where a.user_id=b.user_id) e
+                   """)
+
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+
+cur_target.execute("select count(*) from test1.xa_user_role_d")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()
+-------------------------------test1.xa_userprofile_f---------------------------------------
+import psycopg2
+conn_source=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to source database successfully")
+conn_target=psycopg2.connect(database="postgres",user="postgres",host="localhost",
+                             password="postgres",port="5433")
+print("connected to target  database successfully")
+cur_source=conn_source.cursor()
+cur_target=conn_target.cursor()
+cur_target.execute("SELECT EXISTS (SELECT 1 AS result FROM pg_tables WHERE schemaname = 'test1' AND tablename = 'xa_user_profile_f');")
+tableExists = cur_target.fetchone()[0]
+if tableExists==True:
+    cur_target.execute("""truncate table test1.xa_user_profile_f""")
+    print("table is truncated")
+
+else:
+    cur_target.execute("""CREATE TABLE test1.xa_user_profile_f
+	(
+    user_id integer,
+    campaign_id integer,
+    company_id integer,
+    role_id integer,
+    socialconn_id integer,
+    date_key integer,
+    CONSTRAINT f_campaign_fkey FOREIGN KEY (campaign_id)
+        REFERENCES test1.xa_campaign_d (campaign_id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT f_company_id_fkey FOREIGN KEY (company_id)
+        REFERENCES test1.xa_company_d (company_id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT f_role_id_fkey FOREIGN KEY (role_id)
+        REFERENCES test1.xa_role_d (role_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT f_social_conn_fkey FOREIGN KEY (socialconn_id)
+        REFERENCES test1.xa_socialconn_d (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT f_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES test1.xa_user_d (user_id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+	)
+    """)
+    print("created table  in test1 schema successfully")
+cur_source.execute("""SELECT a.user_id,campaign_id,company_id,role_id,social_conn_id,date_key
+FROM 
+(
+SELECT ud1.user_id,c.campaign_id,cd.company_id,sd.id AS social_conn_id,ud1.datereg_key AS date_key
+FROM test1.xa_user_d ud1 FULL JOIN test1.xa_company_d cd ON (cd.company_id = ud1.company_id)
+LEFT JOIN  test1.xa_campaign_d c ON (c.customer_id = ud1.user_id)
+LEFT JOIN  test1.xa_socialconn_d sd ON (sd.user_id = ud1.user_id)
+)a
+LEFT JOIN (
+SELECT ud.user_id,ur.role_id
+FROM test1.xa_user_role_d ur
+LEFT JOIN test1.xa_user_d ud ON (ur.user_id = ud.user_id)
+JOIN test1.xa_role_d r ON (r.role_id = ur.role_id)
+) b ON (a.user_id = b.user_id)""")
+rows=cur_source.fetchall()
+for row in rows:
+    cur_target.execute("""insert into test1.xa_user_profile_f(user_id,
+    campaign_id,
+    company_id,
+    role_id,
+    socialconn_id ,
+    date_key)
+                values(%s,%s,%s,%s,%s,%s)""",row)
+
+cur_source.execute("""select count(*) from
+(SELECT a.user_id,campaign_id,company_id,role_id,social_conn_id,date_key
+FROM 
+(
+SELECT ud1.user_id,c.campaign_id,cd.company_id,sd.id AS social_conn_id,ud1.datereg_key AS date_key
+FROM test1.xa_user_d ud1 FULL JOIN test1.xa_company_d cd ON (cd.company_id = ud1.company_id)
+LEFT JOIN  test1.xa_campaign_d c ON (c.customer_id = ud1.user_id)
+LEFT JOIN  test1.xa_socialconn_d sd ON (sd.user_id = ud1.user_id)
+)a
+LEFT JOIN (
+SELECT ud.user_id,ur.role_id
+FROM test1.xa_user_role_d ur
+LEFT JOIN test1.xa_user_d ud ON (ur.user_id = ud.user_id)
+JOIN test1.xa_role_d r ON (r.role_id = ur.role_id)
+) b ON (a.user_id = b.user_id)) e
+                   """)
+
+result1 = cur_source.fetchone()
+print("The no of source table rows are",result1[0])
+conn_source.commit()
+conn_source.close()
+
+cur_target.execute("select count(*) from test1.xa_user_profile_f")
+result = cur_target.fetchone()
+print("The no of target table rows are",result[0])
+conn_target.commit()
+conn_target.close()

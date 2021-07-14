@@ -1,0 +1,390 @@
+                         VIEWS
+
+
+Enter user-name: conn as sysdba
+Enter password:
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> grant create view to scott;
+
+Grant succeeded.
+
+
+
+create view v1 as select * from emp
+
+select * from v1
+
+
+7369	SMITH	CLERK	7902	17-DEC-80	800		20	
+7499	ALLEN	SALESMAN	7698	20-FEB-81	1600	300	30	
+7521	WARD	SALESMAN	7698	22-FEB-81	1250	500	30	
+7566	JONES	MANAGER	7839	02-APR-81	2975		20	
+7654	MARTIN	SALESMAN	7698	28-SEP-81	1250	1400	30	
+7698	BLAKE	MANAGER	7839	01-MAY-81	2850		30	
+7782	CLARK	MANAGER	7839	09-JUN-81	2450		10	
+7788	SCOTT	ANALYST	7566	19-APR-87	3000		20	
+7839	KING	PRESIDENT		17-NOV-81	5000		10	
+7844	TURNER	SALESMAN	7698	08-SEP-81	1500	0	30	
+7876	ADAMS	CLERK	7788	23-MAY-87	1100		20	
+7900	JAMES	CLERK	7698	03-DEC-81	950		30	
+7902	FORD	ANALYST	7566	03-DEC-81	3000		20	
+7934	MILLER	CLERK	7782	23-JAN-82	1300		10	
+
+
+update v1 set sal=2000 where sal=3000
+
+
+create view complex as select e.empno,d.dname from emp e, dept d where e.deptno=d.deptno
+
+select * from complex
+
+empno	ename	dname
+--------------------------------
+7369	SMITH	RESEARCH
+7499	ALLEN	SALES
+7521	WARD	SALES
+7566	JONES	RESEARCH
+7654	MARTIN	SALES
+7698	BLAKE	SALES
+7782	CLARK	ACCOUNTING
+7788	SCOTT	RESEARCH
+7839	KING	ACCOUNTING
+7844	TURNER	SALES
+7876	ADAMS	RESEARCH
+7900	JAMES	SALES
+7902	FORD	RESEARCH
+7934	MILLER	ACCOUNTING
+100	SUSHMA	RESEARCH
+
+
+update complex set ename='SUSHMA' where ename='SMITH'
+
+empno	ename	dname
+--------------------------------
+
+7369	SUSHMA	RESEARCH
+
+
+ename has been updated here.
+ when two tables are joined DML operations are accepted.
+
+
+
+                     WE CANNOT USE DML OPERATIONS ON COMPLEX VIEWS 
+
+--> As we used distinct keyword it recognize that it's a complex query
+
+create view complex1 as select distinct sal from emp 
+
+
+update complex1 set sal=2000 where sal=3000
+
+
+--> it shows error like 
+
+Error starting at line : 1,557 in command -
+update complex1 set sal=2000 where sal=3000
+Error at Command Line : 1,557 Column : 8
+Error report -
+SQL Error: ORA-01732: data manipulation operation not legal on this view
+01732. 00000 -  "data manipulation operation not legal on this view"
+*Cause:    
+*Action:
+
+
+                          CREATING VIEWS BY USING ALLIAS NAMES 
+                          
+create view v2 as select empno "number", ename "name", sal+nvl(comm,0) "total_salary"
+from emp where deptno=30
+
+
+select * from v2
+
+number	name	total_salary
+------------------------------------
+7499	ALLEN	   	 1900
+7521	WARD		1750
+7654	MARTIN		2650
+7698	BLAKE		2850
+7844	TURNER		1500
+7900	JAMES		950
+
+
+
+--> We cannot modify the data (DML OPERATIONS) in  views 
+when we have GROUP functions
+		DISTINCT keyword
+		GROUP BY clause
+		PSEUDO COLUMNS
+
+
+create view complex2 as select deptno, 
+max(sal)"highest sal", min(sal)"lowest sal", count(*) "no_of_dept"
+from emp group by  deptno
+
+
+select * from complex2
+
+
+deptno	highestsal	lowest sal    no_of_dept
+--------------------------------------------------------	
+30	2850		950		6
+20	2975		800		6
+10	5000		1300		3
+ 				
+
+				READ ONLY COMMAND IN VIEWS
+
+
+ -->We cannot perform DML operations, it can be used only for retrieving the data
+
+create view view1 ("number","name","designation") as 
+select empno,ename,job from emp where deptno=20
+        with read only 
+
+
+        
+insert into view1 values (123,'SUSHMA','EMPLOYEE')  
+
+--> Here we gave WITH READ ONLY option for 3 columns so we cannot perform DML operations on it.
+--> If we try to INSERT new values in to that view it shows an error like 
+
+ERROR:
+
+Error starting at line : 1,575 in command -
+insert into view1 values (123,'SUSHMA','EMPLOYEE')        
+Error at Command Line : 1,575 Column : 1
+Error report -
+SQL Error: ORA-42399: cannot perform a DML operation on a read-only view
+42399.0000 - "cannot perform a DML operation on a read-only view".
+
+
+select * from view1
+
+
+number 	name 	designation
+---------------------------------- 
+7369	SMITH	CLERK
+7566	JONES	MANAGER
+7788	SCOTT	ANALYST
+7876	ADAMS	CLERK
+7902	FORD	ANALYST
+
+
+
+                        WITH CHECK OPTION IN VIEWS
+
+
+--> It allows user to access to perform DML operations. 
+
+create view view2 as select * from emp where deptno=20
+with check option constraint view2 
+
+
+
+--> creating view, considering base table as another view 
+ 
+create view view3 as select * from view2    
+
+-->dropped base table view
+ 
+drop view view2
+
+
+select * from view3     
+
+-->fetching records from newly created view, so there will be an error here like 
+
+ORA-04063: view "SCOTT.VIEW3" has errors
+04063. 00000 -  "%s has errors"
+*Cause:    Attempt to execute a stored procedure or use a view that has
+           errors.  For stored procedures, the problem could be syntax errors
+           or references to other, non-existent procedures.  For views,
+           the problem could be a reference in the view's defining query to
+           a non-existent table.
+           Can also be a table which has references to non-existent or
+           inaccessible types.
+*Action:   Fix the errors and/or create referenced objects as necessary.
+Error at Line: 1,597 Column: 18
+
+
+ 			CREATE A VIEW USING FORCE 
+
+create force view view4 as select * from force 
+
+--> eventhough table FORCE is not existed in database, view has been created 
+ this is basically used for future use. 
+ 
+select * from force
+
+ORA-00942: table or view does not exist
+00942. 00000 -  "table or view does not exist"
+*Cause:    
+*Action:
+Error at Line: 1,609 Column: 15
+
+
+create view complex2 as select deptno, 
+max(sal)"highest sal", min(sal)"lowest sal", count(*) "no_of_dept"
+from emp group by  deptno
+
+
+
+
+select * from complex2
+
+create sequence s1
+    increment by 10
+    start with 10
+    nocycle
+    nocache 
+
+
+CHANGING THE ORDER FOR SEQUENCE CREATE STATEMENT
+
+create sequence s4
+start with 10
+increment by 1
+minvalue 10
+maxvalue 20
+cache 4
+cycle
+    
+    
+create sequence s2
+    increment by 10
+
+--> First define the next value and then the curerent value will generate
+    
+select s2.nextval  from dual
+
+select s2.currval from dual
+
+select * from sample
+
+select s1.nextval s from dual
+
+select s1.currval from dual
+
+select country_s1.current from dual
+
+   
+
+ select s3.nextval  from dual
+
+select s3.currval from dual
+
+
+create table class (rollnum number, name varchar2(20))
+
+
+insert into class(rollnum,name) values(s3.nextval,'&name')
+
+select * from class
+
+
+
+rollnum	name
+---------------------
+3	sushma
+4	uma
+5	vigneswari
+6	divya
+7	shankar
+8	hari
+9	kalyan
+10	rafi
+1	pallavi
+2	susmitha
+3	ramya
+4	a
+
+select name from class where rollnum=3
+
+
+
+
+alter sequence s3
+increment by 1
+maxvalue 20
+
+
+insert into class(rollnum,name) values(s3.nextval,'&name')
+
+select * from class;
+rollnum	name
+--------------------
+3	sushma
+4	uma
+5	vigneswari
+6	divya
+7	shankar
+8	hari
+9	kalyan
+10	rafi
+1	pallavi
+2	susmitha
+3	ramya
+4	a
+5	b
+6	c
+7	d
+8	e
+9	f
+10	g
+11	h
+12	i
+13	j
+14	k
+15	l
+16	m
+17	n
+18	o
+19	p
+20	q
+1	r
+2	s
+3	t
+4	s
+
+create index index1 on class(name)
+
+select * from class
+
+
+===========================================================================
+
+select * from 
+((select 'small' "name", 0 "lowerbound", 1000 "upperbound",1 a from dual)
+union all
+(select 'medium' "name" ,1001 "lowerbound", 2000 "upperbound",2 a from dual )
+union all
+(select 'large' "name", 2001 "lowerbound" ,3000 "upperbound",3 a from dual)) 
+where a=&n
+
+================================================================================
+
+create synonym sy1 for emp
+
+select deptno,job,sum(sal) from emp 
+group by rollup( deptno,job)
+
+select deptno,job,sum(sal) from emp 
+group by cube( deptno,job)
+
+select is null(deptno,'total') "deptno",sum(sal) from emp 
+group by rollup( deptno)
+
+select CAST(deptno as varchar2(20)) 
+"deptno" from emp
+
+
+
+
+
+
+

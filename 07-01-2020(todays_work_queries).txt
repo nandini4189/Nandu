@@ -1,0 +1,455 @@
+
+Team Member Details
+
+All -Campaign Details
+
+All-Partners
+
+All-Contacts
+
+All-Email Templates
+
+None-Video Files
+
+None-Social Share
+
+All Roles------Campaigns count
+
+		Partner Count
+
+		Contacts count
+
+		Email Templates
+	
+		Video Files
+
+		Social Share
+
+
+Contacts Stats-----------
+
+Vendor Company wise -Contacts by Team Member
+
+		     Contacts by Partner
+
+		      Organization Contacts
+
+		      
+Over All Contacts Count
+
+Over All Contacts Lists
+
+Top 10 Contacts Lists -List name wise
+
+Year wise- Month wise- Lists Vs Contacts
+
+Contacts lists in All-Details
+
+All List Contacts Details..
+
+
+
+
+Todays Work-01-07-2020::::::::
+
+
+
+
+select * from xt_user_profile limit 10
+
+**************** Team Member Details ************
+
+select distinct up.firstname||' '||up.lastname as "Name",
+		up.email_id as "Team member email id",
+		up.datereg,
+		up.datelastlogin,
+		tm.status
+from xt_user_profile up left join xt_team_member tm on(up.company_id=tm.company_id)
+where up.company_id=262
+
+*************************************************************************
+
+
+**************** All Campaigns Details******************
+
+
+select c.campaign_type,
+		c.campaign_schedule_type,
+		c.campaign_name,
+		count(distinct case when xl.action_id<=10 and c.campaign_type in ('VIDEO')
+ 			then (xl.session_id)
+    	    when el.action_id=13 AND  c.campaign_type <>'VIDEO'
+ 			then cast (el.time as varchar) end) as Views
+						
+			from xt_campaign c left join xt_email_log el on (c.campaign_id=el.campaign_id)
+			left join xt_xtremand_log xl on (c.campaign_id=xl.campaign_id)
+			left join xt_user_profile up on(c.customer_id=up.user_id)
+			where up.company_id=262
+			group by 1,2,3
+            order by 4 desc
+
+**********************************************************************
+
+
+****************All Partner Details**************
+
+select ul.user_list_name as "Partner list name",
+		count(uul.user_id) as "#Partners"
+from xt_user_list ul left join xt_user_userlist uul on(ul.user_list_id=uul.user_list_id)
+left join xt_user_profile up on(ul.customer_id=up.user_id)
+where ul.is_partner_userlist='true'
+and up.company_id=262
+group by 1
+order by 2 desc
+
+*************************************************************************
+
+
+***************** All Contacts ******************
+
+select ul.user_list_name as "Contact list name",
+		count(uul.user_id) as "#Contacts"
+from xt_user_list ul left join xt_user_userlist uul on(ul.user_list_id=uul.user_list_id)
+left join xt_user_profile up on(ul.customer_id=up.user_id)
+where ul.is_partner_userlist='false'
+and up.company_id=262
+group by 1
+order by 2 desc
+
+********************************************************
+
+********** All Email Templates**************
+
+select el.name as "Email template name",
+		el.created_time as "Template Created Time"
+from xt_email_templates el left join xt_user_profile up on (up.user_id=el.user_id)
+where up.company_id=262
+
+***************************************************************************************
+
+************ All Video Files Team Members********
+SELECT COUNT(up.user_id)
+FROM xt_video_files xv, xt_user_profile up
+WHERE xv.customer_id=up.user_id
+AND up.company_id=262
+
+
+*******************************************************************************
+
+***************** Team Members all Social Connection***************** 
+
+SELECT COUNT(up.user_id)
+FROM xt_social_connection sc, xt_user_profile up
+WHERE sc.user_id=up.user_id
+AND up.company_id=262
+
+
+
+***** All Roles Team Member wise *********
+
+select count(c.campaign_id)
+from xt_campaign c left join xt_user_profile up
+on (c.customer_id=up.user_id)
+where up.company_id=262
+
+
+select count(uul.user_id)
+from xt_user_list ul left join xt_user_userlist uul 
+on(ul.user_list_id=uul.user_list_id)
+left join xt_user_profile up
+on(up.user_id=ul.customer_id)
+where ul.is_partner_userlist='true'
+and up.company_id=262
+
+
+select count(uul.user_id)
+from xt_user_list ul left join xt_user_userlist uul 
+on(ul.user_list_id=uul.user_list_id)
+left join xt_user_profile up
+on(up.user_id=ul.customer_id)
+where ul.is_partner_userlist='false'
+and up.company_id=262
+
+
+select count(el.user_id)
+from xt_email_templates el left join xt_user_profile up on (up.user_id=el.user_id)
+where up.company_id=262
+
+
+SELECT COUNT(up.user_id)
+FROM xt_video_files xv, xt_user_profile up
+WHERE xv.customer_id=up.user_id
+AND up.company_id=262
+
+
+SELECT COUNT(up.user_id)
+FROM xt_social_connection sc, xt_user_profile up
+WHERE sc.user_id=up.user_id
+AND up.company_id=262
+
+*************************************************************************************************
+
+***************** Contacts Stats ************************
+
+select up.firstname||' '||up.lastname as "Team member name",
+		count(uul.user_id) as "#Contacts"
+from xt_user_list ul left join xt_user_userlist uul 
+on(ul.user_list_id=uul.user_list_id)
+left join xt_user_profile up
+on(up.user_id=ul.customer_id)
+left join xt_team_member tm
+on(tm.team_member_id=ul.customer_id)
+where ul.is_partner_userlist='false'
+and up.company_id=262
+group by 1
+
+*****************************************************************************
+
+
+************ Contacts by Partners**************
+
+
+with
+Partner_company_name as(select  distinct cp.company_name partner_comapny_name,uul.user_id
+from xt_user_profile up,
+	 xt_company_profile cp,
+	 xt_user_list ul,
+	 xt_user_userlist uul ,
+	 xt_user_profile up1
+where ul.user_list_id=uul.user_list_id
+and up.user_id=ul.customer_id
+and uul.user_id=up1.user_id
+and up1.company_id=cp.company_id
+and ul.is_partner_userlist='true'
+and up.company_id=262
+order by cp.company_name desc ),                    
+   
+   Contacts as (select ul.customer_id,count(distinct uul.user_id) as contacts
+from xt_user_list ul left join xt_user_userlist uul 
+on(ul.user_list_id=uul.user_list_id)
+left join xt_user_profile up
+on(up.user_id=ul.customer_id)
+where ul.is_partner_userlist='false'
+group by 1)
+
+							   
+    select Partner_company_name.partner_comapny_name,Contacts.contacts
+   from Partner_company_name,Contacts
+   where Partner_company_name.user_id=Contacts.customer_id
+   order by 2 desc
+
+**************************************************************************************
+
+***************** Organization wise contacts******************
+
+select cp.company_name as "Organization Name",
+		count(distinct uul.user_id) as contacts
+from xt_user_list ul left  join xt_user_userlist uul 
+on(ul.user_list_id=uul.user_list_id)
+
+left join xt_user_profile up
+on(up.user_id=ul.customer_id)
+left join xt_user_role ur on(up.user_id=ur.user_id)
+
+left join xt_company_profile cp
+on(cp.company_id=up.company_id)
+
+where ul.is_partner_userlist='false'
+and ur.role_id=2
+and cp.company_name is not null
+group by 1
+order by 2 desc
+
+---------------------------------
+
+SELECT cp.company_name,(
+SELECT COUNT(DISTINCT user_id)
+FROM xt_user_userlist uul, xt_user_list ul
+WHERE uul.user_list_id= ul.user_list_id AND ul.is_partner_userlist='false' AND up.user_id=ul.customer_id) as Contacts
+FROM xt_company_profile cp, xt_user_role ur, xt_user_profile up, xt_role r
+WHERE up.user_id=ur.user_id
+AND up.company_id= cp.company_id
+AND ur.role_id=r.role_id
+AND r.role_id=2
+AND cp.company_id IS NOT NULL
+order by 2 desc
+
+
+***************************************************************************
+
+
+*********** Contact Lists*************
+
+select count(distinct ul.user_list_id) as Contact_Lists
+from xt_user_list ul left join xt_user_userlist uul 
+on(ul.user_list_id=uul.user_list_id)
+left join xt_user_profile up
+on(up.user_id=ul.customer_id)
+where ul.is_partner_userlist='false'
+
+				OR
+
+select count(user_list_id) as Contacts_lists
+from xt_user_list
+where is_partner_userlist='false'
+
+
+
+********* OverAll Contacts**************
+
+select count(distinct uul.user_id) as Over_All_Contact
+from xt_user_list ul left join xt_user_userlist uul 
+on(ul.user_list_id=uul.user_list_id)
+where ul.is_partner_userlist='false'
+
+
+----------------------------------------------------------------
+
+*********************** Lists Vs Contacts**********************
+
+select count(distinct ul.user_list_id)as Contact_lists,
+		count(distinct uul.user_id)as Contacts,
+		to_char(ul.created_time,'mon-yy')as Months
+from xt_user_list ul left join xt_user_userlist uul
+on(ul.user_list_id=uul.user_list_id)
+where ul.is_partner_userlist='false'
+and extract(year from ul.created_time)=2019
+group by 3
+order by 3
+
+********************************************************
+
+*********** Top 10 Contact Lists***********
+
+select distinct ul.user_list_name,
+		count(uul.user_id) as contacts
+from xt_user_list ul left join xt_user_userlist uul on (ul.user_list_id=uul.user_list_id)
+left join xt_user_profile up on(up.user_id=uul.user_id)
+where ul.is_partner_userlist='false'
+group by 1
+order by 2 desc limit 10
+
+***********************************************************
+
+
+******* Detail of Contacts Lists in All***************
+
+select distinct ul.user_list_name,
+		count(distinct uul.user_id) as contacts
+from xt_user_list ul left join xt_user_userlist uul on (ul.user_list_id=uul.user_list_id)
+left join xt_user_profile up on(up.user_id=uul.user_id)
+where ul.is_partner_userlist='false'
+group by 1
+order by 2 desc 
+
+************************************
+
+****** All List Contact Details ******************
+
+select up.email_id as "Contact Email_id",
+		up.firstname||' '||up.lastname as "Contact name"
+from xt_user_list ul left join xt_user_userlist uul on ul.user_list_id=uul.user_list_id
+left join xt_user_profile up on up.user_id=uul.user_id
+where ul.is_partner_userlist='false'
+
+**************************************************************
+
+************** All Campaigns Detailed Report- All All******************
+
+select cp.company_name,
+	   c.campaign_name,
+	   c.campaign_type,
+	   c.campaign_schedule_type,
+	   c.created_time,
+	   c.launch_time
+from xt_campaign c left join xt_user_profile up 
+on (c.customer_id=up.user_id)
+left join xt_company_profile cp 
+on (up.company_id=cp.company_id)
+order by 1
+
+
+-----------------------------------------------------------------------------------
+
+
+
+select 
+	    c.campaign_name,
+	   c.campaign_type,
+	   up.email_id as "User Email id",
+	   up.firstname||' '||up.lastname as "User Name",
+	   up.mobile_number as "User Mobile Number",
+	   el.time as "Email Opened Time"
+from xt_campaign c left join xt_email_log el on (c.campaign_id=el.campaign_id)
+left join xt_user_profile up 
+on (c.customer_id=up.user_id)
+left join xt_company_profile cp 
+on (up.company_id=cp.company_id)
+--where c.campaign_name='DB Client 1'
+--and up.company_id=262
+order by 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		     
+		
